@@ -1,0 +1,173 @@
+<title>Protótipo The Super Potato</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Nunito:wght@400;600;700&display=swap">
+<style>
+/* Layout: uma tela só. No alto, o nome e os botões; no meio, o jogo em 16:9; embaixo, a legenda das teclas.
+   No celular em pé, os botões de toque ficam abaixo do jogo; deitado, por cima dos cantos.
+   Visual único e escuro, de floresta à noite. As cores vêm da visual novel:
+   a casca da batata, o olho azul-esverdeado, a chama do cajado e o musgo da floresta. */
+:root{
+  --noite:#14111E; --painel:#211C2D; --linha:#3A3349; --casca:#F5F0D6; --apagado:#B8AE9C;
+  --olho:#5FD6CD; --chama:#F3A552; --tinta-chama:#1B1408; --vidro:rgba(13,11,21,.80); --vidro-linha:rgba(245,240,214,.30);
+  --f-display:"Baloo 2","Trebuchet MS",Verdana,sans-serif;
+  --f-body:Nunito,"Segoe UI",Arial,sans-serif;
+  --f-mono:ui-monospace,Consolas,"Courier New",monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%}
+body{margin:0;background:var(--noite);color:var(--casca);font-family:var(--f-body);font-size:14px;line-height:1.45;overflow:hidden;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+#app{height:100%;display:flex;flex-direction:column;gap:8px;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));background:var(--noite)}
+
+.topo{display:flex;align-items:center;justify-content:space-between;gap:6px 12px;flex-wrap:wrap}
+.marca{display:flex;align-items:baseline;gap:10px;min-width:0}
+.nome{font-family:var(--f-display);font-weight:700;font-size:20px;line-height:1.1;white-space:nowrap}
+.etq{color:var(--apagado);font-size:11px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+.acoes{display:flex;gap:6px;flex-wrap:wrap}
+.bt-ui{font:600 13px var(--f-body);color:var(--casca);background:var(--painel);border:1px solid var(--linha);border-radius:8px;padding:6px 10px;cursor:pointer}
+.bt-ui:hover{border-color:var(--olho)}
+.bt-ui[aria-pressed="true"]{border-color:var(--olho);color:var(--olho)}
+:focus-visible{outline:2px solid var(--olho);outline-offset:2px}
+
+.palco{flex:1;min-height:0;min-width:0;position:relative;display:flex;align-items:center;justify-content:center}
+.tela{position:relative;flex:none;border-radius:10px;overflow:hidden;background:#0D0B15;box-shadow:0 0 0 1px var(--linha)}
+canvas{display:block;width:100%;height:100%;touch-action:none;outline:none}
+
+.capa{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:calc(var(--u,8px)*1.3);padding:4%;text-align:center;background:rgba(13,11,21,.74)}
+.capa h1,.capa h2{font-family:var(--f-display);font-weight:700;margin:0;line-height:1.05;text-wrap:balance;font-size:max(22px,calc(var(--u,8px)*5.4))}
+.capa h2{font-size:max(20px,calc(var(--u,8px)*4))}
+.capa p{margin:0;max-width:46ch;font-size:max(12px,calc(var(--u,8px)*1.7))}
+.capa .sub{color:var(--apagado);font-size:max(11px,calc(var(--u,8px)*1.35))}
+.olhinho{color:var(--chama);letter-spacing:.14em;text-transform:uppercase;font-weight:700;font-size:max(10px,calc(var(--u,8px)*1.3))}
+.bt-grande{font:700 max(15px,calc(var(--u,8px)*2.1))/1.2 var(--f-display);color:var(--tinta-chama);background:var(--chama);border:0;border-radius:999px;padding:.45em 1.7em;cursor:pointer}
+.bt-grande:hover{filter:brightness(1.08)}
+.linha-bt{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.placar{display:grid;grid-template-columns:auto auto;gap:2px 18px;margin:0;text-align:left;font-size:max(12px,calc(var(--u,8px)*1.6));font-variant-numeric:tabular-nums}
+.placar dt{color:var(--apagado)}
+.placar dd{margin:0;font-weight:700;text-align:right}
+
+.dica{position:absolute;top:3%;left:34%;right:2%;display:flex;justify-content:center;pointer-events:none;opacity:0;transition:opacity .2s}
+.dica.ligada{opacity:1}
+.dica span{background:var(--vidro);border:1px solid var(--vidro-linha);border-radius:10px;padding:.35em .8em;font-weight:600;text-align:center;text-wrap:balance;font-size:max(12px,calc(var(--u,8px)*1.65))}
+.medidas{position:absolute;left:2%;bottom:3%;z-index:4;margin:0;padding:.5em .8em;max-width:96%;overflow:hidden;white-space:pre;pointer-events:none;background:var(--vidro);border:1px solid var(--vidro-linha);border-radius:8px;color:var(--casca);font-family:var(--f-mono);line-height:1.5;font-size:max(9px,calc(var(--u,8px)*1.2))}
+.ajustes{position:absolute;top:2%;right:2%;z-index:5;width:min(290px,72%);max-height:96%;overflow:auto;display:grid;gap:8px;padding:12px;background:var(--painel);border:1px solid var(--linha);border-radius:10px;font-size:12px}
+.ajustes strong{font-family:var(--f-display);font-size:15px}
+.ajuste{display:grid;grid-template-columns:1fr auto;gap:0 8px;align-items:baseline}
+.ajuste output{color:var(--chama);font-weight:700;font-variant-numeric:tabular-nums}
+.ajuste input{grid-column:1/-1;width:100%;margin:2px 0 4px;accent-color:var(--chama)}
+.ajustes textarea{width:100%;background:var(--noite);color:var(--casca);border:1px solid var(--linha);border-radius:6px;font:11px var(--f-mono);-webkit-user-select:text;user-select:text}
+.ajustes .sub{color:var(--apagado)}
+
+.toque{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:space-between;padding:10px;pointer-events:none}
+.toque>*{pointer-events:auto;touch-action:none}
+.alavanca{width:124px;height:124px;border-radius:50%;display:grid;place-items:center;background:rgba(245,240,214,.10);border:2px solid rgba(245,240,214,.35)}
+.pino{width:54px;height:54px;border-radius:50%;background:rgba(245,240,214,.55);pointer-events:none}
+.botoes{display:grid;grid-template-columns:auto auto;gap:8px;align-items:end;justify-items:center}
+.bt-t{width:66px;height:66px;border-radius:50%;border:2px solid rgba(245,240,214,.4);background:rgba(33,28,45,.55);color:var(--casca);font:700 11px var(--f-body);letter-spacing:.06em}
+.bt-t.apertado{background:rgba(245,240,214,.4)}
+.bt-t.pulo{width:82px;height:82px;border-color:var(--olho)}
+.bt-t.golpe{border-color:var(--chama)}
+.retrato.com-toque .palco{flex-direction:column;justify-content:flex-start;gap:8px}
+.retrato.com-toque .toque{position:relative;inset:auto;flex:1;min-height:190px;width:100%;align-items:center;padding:12px 16px;background:var(--painel);border:1px solid var(--linha);border-radius:12px}
+.vira{display:none}
+.retrato.com-toque .vira{display:block;position:absolute;top:10px;left:0;right:0;text-align:center;color:var(--apagado);font-size:12px;pointer-events:none}
+
+.rodape{display:flex;gap:4px 14px;flex-wrap:wrap;justify-content:center;color:var(--apagado);font-size:12px}
+.rodape span{white-space:nowrap}
+kbd{font:600 11px var(--f-mono);color:var(--casca);background:var(--painel);border:1px solid var(--linha);border-bottom-width:2px;border-radius:5px;padding:1px 5px}
+.com-toque .rodape{display:none}
+@media (max-height:430px){.rodape{display:none}.etq{display:none}}
+@media (max-width:520px){.etq{display:none}.bt-ui{padding:5px 8px;font-size:12px}}
+@media (prefers-reduced-motion:reduce){.dica{transition:none}}
+</style>
+
+<div id="app">
+  <header class="topo">
+    <div class="marca"><span class="nome">The Super Potato</span><span class="etq">protótipo de sensação</span></div>
+    <div class="acoes">
+      <button class="bt-ui" id="btPausa" type="button">Pausa</button>
+      <button class="bt-ui" id="btSom" type="button" aria-pressed="true">Som</button>
+      <button class="bt-ui" id="btMedidas" type="button" aria-pressed="false">Medidas</button>
+      <button class="bt-ui" id="btAjustes" type="button" aria-pressed="false">Ajustes</button>
+      <button class="bt-ui" id="btTela" type="button">Tela cheia</button>
+    </div>
+  </header>
+
+  <main class="palco" id="palco">
+    <div class="tela" id="tela">
+      <canvas id="jogo" tabindex="0" aria-label="Fase de teste: a batata corre, pula, dá dash e bate com o cajado em cogumelos e cenouras"></canvas>
+      <div class="dica" id="dica"><span id="dicaTxt"></span></div>
+      <pre class="medidas" id="medidas" hidden></pre>
+
+      <section class="ajustes" id="ajustes" hidden aria-label="Ajustes de sensação">
+        <strong>Ajustes de sensação</strong>
+        <div id="listaAjustes"></div>
+        <div class="linha-bt">
+          <button class="bt-ui" id="btCopiar" type="button">Copiar valores</button>
+          <button class="bt-ui" id="btPadrao" type="button">Voltar ao padrão</button>
+        </div>
+        <textarea id="valores" rows="4" readonly hidden aria-label="Valores dos ajustes"></textarea>
+        <span class="sub" id="avisoCopia">Mexa enquanto joga. Vale na hora.</span>
+      </section>
+
+      <div class="capa" id="capa">
+        <span class="olhinho">Protótipo de sensação</span>
+        <h1>The Super Potato</h1>
+        <p>Uma fase curta para sentir a batata em ação: correr, pular, dar dash e bater com o cajado.</p>
+        <button class="bt-grande" id="btJogar" type="button">Jogar</button>
+        <p class="sub">A arte é provisória, desenhada por código a partir dos seus personagens.</p>
+      </div>
+
+      <div class="capa" id="pausa" hidden>
+        <h2>Pausado</h2>
+        <button class="bt-grande" id="btContinuar" type="button">Continuar</button>
+        <div class="linha-bt">
+          <button class="bt-ui" id="btTocha" type="button">Voltar à última tocha</button>
+          <button class="bt-ui" id="btRecomecar" type="button">Recomeçar a fase</button>
+        </div>
+      </div>
+
+      <div class="capa" id="fim" hidden>
+        <span class="olhinho">Fim do protótipo</span>
+        <h2>Você chegou à casa do vidente</h2>
+        <dl class="placar" id="placar"></dl>
+        <button class="bt-grande" id="btDeNovo" type="button">Jogar de novo</button>
+        <p class="sub">Achou o pulo pesado ou o golpe lento? Abra Ajustes, mexa e copie os valores.</p>
+      </div>
+    </div>
+
+    <div class="toque" id="toque" hidden>
+      <span class="vira">Deite o celular para ver o jogo maior.</span>
+      <div class="alavanca" id="alavanca" role="application" aria-label="Alavanca: andar e mirar o golpe"><div class="pino" id="pino"></div></div>
+      <div class="botoes">
+        <button class="bt-t" data-acao="pure" type="button">PURÊ</button>
+        <button class="bt-t" data-acao="dash" type="button">DASH</button>
+        <button class="bt-t golpe" data-acao="golpe" type="button">GOLPE</button>
+        <button class="bt-t pulo" data-acao="pulo" type="button">PULO</button>
+      </div>
+    </div>
+  </main>
+
+  <footer class="rodape" id="rodape">
+    <span><kbd>←</kbd> <kbd>→</kbd> andar</span>
+    <span><kbd>Z</kbd> ou <kbd>Espaço</kbd> pular</span>
+    <span><kbd>X</kbd> golpe</span>
+    <span><kbd>C</kbd> dash</span>
+    <span><kbd>V</kbd> bola de purê</span>
+    <span><kbd>↑</kbd> <kbd>↓</kbd> + golpe: para cima e para baixo</span>
+    <span><kbd>Esc</kbd> pausa</span>
+    <span>também vale <kbd>A</kbd> <kbd>D</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd></span>
+  </footer>
+</div>
+
+<script src="js/ajuste.js"></script>
+<script src="js/motor.js"></script>
+<script src="js/batata.js"></script>
+<script src="js/inimigos.js"></script>
+<script src="js/desenho.js"></script>
+<script src="js/jogo.js"></script>
+<script src="js/testes.js"></script>

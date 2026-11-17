@@ -1,0 +1,817 @@
+<title>Roadmap The Super Potato</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Nunito:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: cabeçalho com resumo → auditoria (antes e depois) → ciclo → marcos → agora → grafo de dependências → tabela → decisões/insumos → histórico.
+   Cores tiradas do jogo: casca de batata, raiz, olho azul-esverdeado, cenoura e cogumelo. */
+:root{
+  --bg:#FFFCE6; --surface:#FFFFFF; --ink:#33261A; --muted:#6F6252; --line:#EDE3B4;
+  --olho:#0B7F7A; --casca:#FBF3C4; --cenoura:#B95C0A; --raiz:#7A4B21;
+  --ok:#2F6B47; --ok-bg:#DCEBDD;
+  --run:#94560C; --run-bg:#F6E4C6;
+  --ready:#3540A8; --ready-bg:#E3E6FA;
+  --part:#7A5D2B; --part-bg:#F1E9D4;
+  --plan:#63695F; --plan-bg:#EEEEE6;
+  --fut:#8A8F84;
+  --crit:#A32A1E; --crit-bg:#F8DDD8;
+  --edge:#CFC79A; --up:#3540A8; --down:#B95C0A;
+  --f-display:"Baloo 2", "Trebuchet MS", Verdana, sans-serif;
+  --f-body:Nunito, "Segoe UI", Arial, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#16131F; --surface:#211C2D; --ink:#F5F0D6; --muted:#B8AE9C; --line:#3A3349;
+  --olho:#5FD6CD; --casca:#2A2338; --cenoura:#F3A552; --raiz:#D9B48A;
+  --ok:#8FD0A3; --ok-bg:#1E3828; --run:#EAB66B; --run-bg:#3A2B14; --ready:#A9B4FF; --ready-bg:#262B55;
+  --part:#D3B375; --part-bg:#342B17; --plan:#A9A6B5; --plan-bg:#2A2736; --fut:#7F7B8C;
+  --crit:#F0958A; --crit-bg:#45211D;
+  --edge:#4A4360; --up:#A9B4FF; --down:#F3A552; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#16131F; --surface:#211C2D; --ink:#F5F0D6; --muted:#B8AE9C; --line:#3A3349;
+  --olho:#5FD6CD; --casca:#2A2338; --cenoura:#F3A552; --raiz:#D9B48A;
+  --ok:#8FD0A3; --ok-bg:#1E3828; --run:#EAB66B; --run-bg:#3A2B14; --ready:#A9B4FF; --ready-bg:#262B55;
+  --part:#D3B375; --part-bg:#342B17; --plan:#A9A6B5; --plan-bg:#2A2736; --fut:#7F7B8C;
+  --crit:#F0958A; --crit-bg:#45211D;
+  --edge:#4A4360; --up:#A9B4FF; --down:#F3A552; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;margin:0}
+.wrap{max-width:1280px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:32px 64px;display:grid;gap:44px}
+h1,h2,h3,h4{font-family:var(--f-display);font-weight:600;text-wrap:balance;margin:0;line-height:1.2}
+h1{font-size:clamp(30px,4.4vw,44px);line-height:1.05;font-weight:700}
+h2{font-size:25px}
+h3{font-size:18px}
+p{margin:0}
+.eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--cenoura);font-weight:700}
+.muted{color:var(--muted)}
+.mono{font-family:var(--f-mono)}
+a{color:var(--olho)}
+section{display:grid;gap:16px;min-width:0}
+.sec-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 16px}
+.sec-head p{max-width:68ch}
+
+/* Cabeçalho */
+header{display:grid;gap:18px;border-bottom:1px solid var(--line);padding-bottom:28px}
+.brand{display:flex;gap:18px;align-items:center;min-width:0}
+.brand svg{flex:none;width:76px;height:auto}
+.brand > div{display:grid;gap:4px;min-width:0}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted)}
+.lede{max-width:70ch;font-size:16px}
+.counts{display:flex;flex-wrap:wrap;gap:10px}
+.count{display:flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-size:13px}
+.count b{font-variant-numeric:tabular-nums;font-size:15px}
+.bar{display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--plan-bg);max-width:640px}
+.bar span{display:block;height:100%}
+
+/* Chips de estado */
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:2px 9px;border-radius:999px;white-space:nowrap;border:1px solid transparent;font-weight:600}
+.chip::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.s-concluido{color:var(--ok);background:var(--ok-bg)}
+.s-andamento{color:var(--run);background:var(--run-bg)}
+.s-pronto{color:var(--ready);background:var(--ready-bg)}
+.s-parcial{color:var(--part);background:var(--part-bg)}
+.s-planejado{color:var(--plan);background:var(--plan-bg)}
+.s-futuro{color:var(--fut);background:transparent;border:1px dashed var(--fut)}
+.s-critico{color:var(--crit);background:var(--crit-bg)}
+.own{font-size:11px;font-family:var(--f-mono);padding:1px 7px;border-radius:4px;border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.own.sis{color:var(--olho);border-color:var(--olho)}
+.own.vis{color:var(--cenoura);border-color:var(--cenoura)}
+.idlink{font-family:var(--f-mono);font-size:12.5px;background:none;border:0;padding:0;color:var(--olho);cursor:pointer;text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+.idlink:hover{text-decoration-color:currentColor}
+.idlink.done{color:var(--muted);text-decoration:line-through}
+button:focus-visible,.idlink:focus-visible,input:focus-visible,.node:focus-visible{outline:3px solid var(--ready);outline-offset:2px}
+
+/* Auditoria */
+.aud-nums{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.aud-num{border-top:3px solid var(--line);padding-top:10px;min-width:0}
+.aud-num b{display:block;font-family:var(--f-display);font-size:34px;line-height:1;font-variant-numeric:tabular-nums}
+.aud-num span{font-size:13px;color:var(--muted)}
+.aud-num.crit{border-color:var(--crit)} .aud-num.alta{border-color:var(--cenoura)} .aud-num.media{border-color:var(--raiz)} .aud-num.aberto{border-color:var(--ready)}
+.pairs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.pair{display:grid;gap:8px;min-width:0}
+.pair .shots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.pair figure{margin:0;display:grid;gap:4px;min-width:0}
+.pair img{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--line);background:var(--casca)}
+.pair figcaption{font-size:12px;color:var(--muted)}
+.pair figcaption b{color:var(--ink)}
+.finds{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.finds li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:6px 12px;align-items:baseline;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:14px}
+.finds .fid{font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
+.finds .fx{grid-column:2 / -1;font-size:13px;color:var(--muted)}
+.finds .fr{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;justify-content:flex-end}
+details.more{border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+details.more > summary{cursor:pointer;padding:10px 14px;font-weight:700;font-size:14px}
+details.more > div{padding:0 14px 14px}
+
+/* Ciclo de trabalho */
+.cycle{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;counter-reset:c}
+.cycle div{border-top:2px solid var(--olho);padding-top:10px;font-size:13.5px;min-width:0}
+.cycle div b{display:block;font-size:14px;margin-bottom:2px}
+.cycle div::before{counter-increment:c;content:counter(c);font-family:var(--f-mono);font-size:12px;color:var(--cenoura)}
+
+/* Marcos */
+.miles{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.mile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:10px;align-content:start;min-width:0}
+.mile .top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.mile .n{font-family:var(--f-mono);font-size:12px;color:var(--cenoura)}
+.mile .pct{font-variant-numeric:tabular-nums;font-size:13px;color:var(--muted)}
+.mile .pb{height:6px;border-radius:3px;background:var(--plan-bg);overflow:hidden}
+.mile .pb span{display:block;height:100%;background:var(--ok)}
+.mile .left{display:flex;flex-wrap:wrap;gap:4px 8px}
+.mile.next{border-color:var(--olho);box-shadow:0 0 0 1px var(--olho)}
+
+/* Agora */
+.now{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.col{display:grid;gap:8px;align-content:start;min-width:0}
+.col h3{display:flex;gap:8px;align-items:center;font-size:16px}
+.stack{display:grid;gap:8px}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;gap:4px;min-width:0}
+.item .r1{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
+.item .t{font-size:14px;font-weight:600}
+.item .m{font-size:12px;color:var(--muted)}
+.empty{font-size:13px;color:var(--muted);padding:10px 12px;border:1px dashed var(--line);border-radius:10px}
+.pri{font-family:var(--f-mono);font-size:11px;color:var(--surface);background:var(--olho);padding:1px 6px;border-radius:4px}
+
+/* Grafo */
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tbtn{font:inherit;font-size:13px;padding:5px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.tbtn[aria-pressed="true"]{background:var(--olho);border-color:var(--olho);color:var(--surface)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:12px;color:var(--muted);align-items:center}
+.gbox{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.gbox svg{display:block}
+.node{cursor:pointer}
+.node rect.card{stroke-width:1.2}
+.node text{pointer-events:none}
+.n-id{font-family:var(--f-mono);font-size:10.5px;fill:var(--muted)}
+.n-t{font-family:var(--f-body);font-size:12px;fill:var(--ink)}
+.n-o{font-family:var(--f-mono);font-size:9px}
+.node.s-concluido rect.card{fill:var(--ok-bg);stroke:var(--ok)}
+.node.s-andamento rect.card{fill:var(--run-bg);stroke:var(--run);stroke-width:2.4}
+.node.s-pronto rect.card{fill:var(--ready-bg);stroke:var(--ready);stroke-width:2}
+.node.s-parcial rect.card{fill:var(--part-bg);stroke:var(--part)}
+.node.s-planejado rect.card{fill:var(--plan-bg);stroke:var(--line)}
+.node.s-futuro rect.card{fill:var(--surface);stroke:var(--fut);stroke-dasharray:4 3}
+.node.s-futuro .n-t{fill:var(--muted)}
+.n-o.sis{fill:var(--olho)} .n-o.vis{fill:var(--cenoura)}
+.edge{fill:none;stroke:var(--edge);stroke-width:1.1;opacity:.6}
+.band{fill:var(--casca);opacity:.6}
+.band-l{font-family:var(--f-mono);font-size:11px;fill:var(--muted);letter-spacing:.08em}
+.colnum{font-family:var(--f-mono);font-size:10px;fill:var(--muted)}
+svg.sel .node{opacity:.22}
+svg.sel .node.hl{opacity:1}
+svg.sel .node.me rect.card{stroke:var(--ink);stroke-width:2.6}
+svg.sel .edge{opacity:.08}
+svg.sel .edge.up{stroke:var(--up);opacity:.95;stroke-width:1.8}
+svg.sel .edge.down{stroke:var(--down);opacity:.95;stroke-width:1.8}
+svg.flt .node.off{opacity:.18}
+
+.detail{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;display:grid;gap:12px}
+.detail .hd{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.detail dl{display:grid;grid-template-columns:150px minmax(0,1fr);gap:8px 16px;margin:0;font-size:14px}
+.detail dt{color:var(--muted);font-size:13px}
+.detail dd{margin:0;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;min-width:0}
+
+/* Prompt pronto */
+.pbox{display:grid;gap:8px;border-top:1px solid var(--line);padding-top:12px}
+.pbox h4{font-size:15px}
+.pbtns{display:flex;flex-wrap:wrap;gap:8px}
+.ptext{width:100%;font-family:var(--f-mono);font-size:12.5px;line-height:1.5;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--ink);padding:10px 12px;resize:vertical}
+
+/* Tabela */
+.tablebox{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:860px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:700;background:var(--bg)}
+tr.lane td{background:var(--casca);font-family:var(--f-display);font-weight:600;font-size:15px;padding-block:7px}
+td .deps{display:flex;flex-wrap:wrap;gap:3px 8px}
+td.num{font-variant-numeric:tabular-nums;color:var(--muted)}
+#q{font:inherit;font-size:14px;padding:7px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);min-width:0;width:min(320px,100%)}
+
+/* Listas finais */
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px}
+.list{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.list li{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:4px;font-size:14px;min-width:0}
+.list li .m{font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 8px}
+.q .rec{font-size:13px;color:var(--olho)}
+.q .rec b{font-weight:700}
+.log li{display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px}
+.log .d{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+
+@media (max-width:900px){.now,.two,.pairs{grid-template-columns:minmax(0,1fr)}.cycle{grid-template-columns:repeat(2,minmax(0,1fr))}.aud-nums{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.detail dl{grid-template-columns:minmax(0,1fr)}.detail dt{margin-top:4px}.cycle{grid-template-columns:minmax(0,1fr)}.finds li{grid-template-columns:38px minmax(0,1fr)}.finds .fr{grid-column:2;justify-content:flex-start}.brand svg{width:58px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <svg viewBox="0 0 120 150" role="img" aria-label="A batata, heroína do jogo">
+        <ellipse cx="60" cy="140" rx="34" ry="6" fill="#33261A" opacity=".12"/>
+        <path d="M30 96 C20 104 18 122 24 132 C28 122 32 110 38 102 Z" fill="#8A5A2B"/>
+        <path d="M90 96 C100 104 102 122 96 132 C92 122 88 110 82 102 Z" fill="#8A5A2B"/>
+        <path d="M46 126 C42 134 42 140 44 146 C50 140 52 134 54 127 Z" fill="#8A5A2B"/>
+        <path d="M74 126 C78 134 78 140 76 146 C70 140 68 134 66 127 Z" fill="#8A5A2B"/>
+        <path d="M60 14 C86 14 96 44 94 80 C92 112 80 132 60 132 C40 132 28 112 26 80 C24 44 34 14 60 14 Z" fill="#F7EFA0" stroke="#5B4326" stroke-width="2.2"/>
+        <path d="M32 40 C30 22 44 8 62 9 C78 10 90 20 88 34 C82 28 76 32 72 26 C68 34 60 28 56 34 C50 28 44 36 40 32 C38 38 34 36 32 40 Z" fill="#6B4423"/>
+        <ellipse cx="47" cy="62" rx="8" ry="7" fill="#FFFFFF" stroke="#5B4326" stroke-width="1.4"/>
+        <ellipse cx="74" cy="62" rx="8" ry="7" fill="#FFFFFF" stroke="#5B4326" stroke-width="1.4"/>
+        <circle cx="48" cy="63" r="4.6" fill="#35B8B0"/><circle cx="75" cy="63" r="4.6" fill="#35B8B0"/>
+        <circle cx="49.5" cy="61.5" r="1.4" fill="#FFFFFF"/><circle cx="76.5" cy="61.5" r="1.4" fill="#FFFFFF"/>
+        <ellipse cx="40" cy="76" rx="7" ry="4" fill="#F2A7A0" opacity=".7"/><ellipse cx="81" cy="76" rx="7" ry="4" fill="#F2A7A0" opacity=".7"/>
+        <path d="M56 80 Q60 82 64 80" fill="none" stroke="#5B4326" stroke-width="1.8" stroke-linecap="round"/>
+        <g fill="#5B4326"><circle cx="38" cy="94" r="1.5"/><circle cx="70" cy="104" r="1.3"/><circle cx="52" cy="112" r="1.6"/><circle cx="84" cy="90" r="1.2"/><circle cx="62" cy="48" r="1.1"/></g>
+      </svg>
+      <div>
+        <span class="eyebrow">The Super Potato · visual novel e jogo de ação</span>
+        <h1>Roadmap das fatias</h1>
+      </div>
+    </div>
+    <p class="lede">Onde o jogo está, o que pode começar agora e o que cada entrega libera. As fatias vêm da auditoria de novembro de 2026 e do plano para levar a história de Potatoesvill a um jogo de ação e aventura em 2D. Cada fatia traz um prompt pronto para você entregar ao Claude.</p>
+    <div class="meta"><span id="updated"></span><span>Fonte: docs/AUDITORIA.md</span><span>Página: docs/roadmap.html</span><span>Ramo: auditoria-correcoes</span></div>
+    <div class="counts" id="counts"></div>
+    <div class="bar" id="bar" aria-hidden="true"></div>
+  </header>
+
+  <section aria-labelledby="h-aud">
+    <div class="sec-head"><h2 id="h-aud">O que a auditoria achou</h2><p class="muted">Do jeito que estava no GitHub, o jogo não abria. Os 25 defeitos abaixo foram consertados e conferidos com testes automatizados. Dos 12 pontos em aberto, 10 já foram resolvidos, a pedido seu. Restam 2, que dependem de uma escolha sua.</p></div>
+    <div class="aud-nums" id="aud-nums"></div>
+    <div class="pairs">
+      <div class="pair">
+        <h3>Salvar e carregar</h3>
+        <div class="shots">
+          <figure><img src="img/antes-saves.jpg" alt="Tela de carregar antes: sem números de página, textos em inglês" width="720" height="405" loading="lazy"><figcaption><b>Antes.</b> As páginas não apareciam: a fonte não tem números.</figcaption></figure>
+          <figure><img src="img/depois-saves.jpg" alt="Tela de carregar depois: páginas de 1 a 9 visíveis e textos em português" width="720" height="405" loading="lazy"><figcaption><b>Depois.</b> Páginas visíveis e tudo em português.</figcaption></figure>
+        </div>
+      </div>
+      <div class="pair">
+        <h3>A luta contra o cogumelo</h3>
+        <div class="shots">
+          <figure><img src="img/antes-luta.jpg" alt="Luta antes: uma única barra de vida vazia e escolhas ilegíveis" width="720" height="405" loading="lazy"><figcaption><b>Antes.</b> Cogumelo com 0 de vida e a luta continua. Escolhas ilegíveis.</figcaption></figure>
+          <figure><img src="img/depois-luta.jpg" alt="Luta depois: duas barras de vida com números e escolhas legíveis" width="720" height="405" loading="lazy"><figcaption><b>Depois.</b> Uma barra para cada um, com números. Dá para vencer.</figcaption></figure>
+        </div>
+      </div>
+    </div>
+    <ul class="finds" id="finds-crit"></ul>
+    <details class="more"><summary id="sum-alta"></summary><div><ul class="finds" id="finds-alta"></ul></div></details>
+    <details class="more"><summary id="sum-media"></summary><div><ul class="finds" id="finds-media"></ul></div></details>
+    <details class="more" open><summary id="sum-aberto"></summary><div><ul class="finds" id="finds-aberto"></ul></div></details>
+  </section>
+
+  <section aria-labelledby="h-cycle">
+    <div class="sec-head"><h2 id="h-cycle">Como cada fatia anda</h2></div>
+    <div class="cycle">
+      <div><b>Você escolhe</b>Pede para iniciar uma fatia, ou copia o prompt dela daqui.</div>
+      <div><b>Plano</b>O Claude lê as regras do projeto e diz o que vai fazer, em que arquivos e com que testes.</div>
+      <div><b>Você responde</b>Decide os pontos em aberto. Na arte e na história, a palavra final é sua.</div>
+      <div><b>Execução</b>Implementa, roda o testar.bat e mostra a prova de cada critério.</div>
+      <div><b>Fechamento</b>Atualiza o estado da fatia e o histórico desta página.</div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-miles">
+    <div class="sec-head"><h2 id="h-miles">Marcos</h2><p class="muted">Cada marco conta as suas fatias e tudo de que elas dependem. “Faltam” lista o que ainda não está concluído.</p></div>
+    <div class="miles" id="miles"></div>
+  </section>
+
+  <section aria-labelledby="h-now">
+    <div class="sec-head"><h2 id="h-now">Agora</h2><p class="muted">“Pronta” significa que todas as dependências entre fatias estão concluídas. O que depende de você aparece como aviso.</p></div>
+    <div class="now">
+      <div class="col"><h3><span class="chip s-andamento">Em andamento</span></h3><div class="stack" id="c-run"></div></div>
+      <div class="col"><h3><span class="chip s-pronto">Pronta para iniciar</span></h3><div class="stack" id="c-ready"></div></div>
+      <div class="col"><h3><span class="chip s-parcial">Parcial, pode avançar</span></h3><div class="stack" id="c-part"></div></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-graph">
+    <div class="sec-head"><h2 id="h-graph">Dependências</h2><p class="muted">As colunas, da esquerda para a direita, seguem a ordem possível. Clique numa fatia para ver em azul o que ela precisa e em laranja o que ela libera.</p></div>
+    <div class="tools" role="group" aria-label="Destacar no grafo">
+      <button class="tbtn" data-f="all" aria-pressed="true">Todas</button>
+      <button class="tbtn" data-f="sis" aria-pressed="false">Sistema</button>
+      <button class="tbtn" data-f="vis" aria-pressed="false">Visual e som</button>
+      <button class="tbtn" data-f="pronto" aria-pressed="false">Prontas</button>
+      <button class="tbtn" data-f="vn" aria-pressed="false">Só a visual novel</button>
+      <button class="tbtn" id="clear" hidden>Limpar seleção</button>
+    </div>
+    <div class="legend" id="legend"></div>
+    <div class="gbox" id="gbox"></div>
+    <div class="detail" id="detail" hidden></div>
+  </section>
+
+  <section aria-labelledby="h-table">
+    <div class="sec-head"><h2 id="h-table">Todas as fatias</h2><input id="q" type="search" placeholder="Filtrar por código ou nome" aria-label="Filtrar fatias"></div>
+    <div class="tablebox"><table><thead><tr><th>Fatia</th><th>Tipo · modelo</th><th>Estado</th><th>Depende de</th><th>Libera</th><th>Prompt</th></tr></thead><tbody id="tbody"></tbody></table></div>
+  </section>
+
+  <section aria-labelledby="h-fichas">
+    <div class="sec-head"><h2 id="h-fichas">Fichas das fatias</h2><p class="muted">Cada fatia iniciada ganha uma ficha com plano e perguntas, listada aqui.</p></div>
+    <ul class="list" id="fichas"></ul>
+  </section>
+
+  <div class="two">
+    <section aria-labelledby="h-q">
+      <h2 id="h-q">Pontos a decidir</h2>
+      <ul class="list q" id="perguntas"></ul>
+    </section>
+    <section aria-labelledby="h-ins">
+      <h2 id="h-ins">O que depende de você</h2>
+      <ul class="list" id="insumos"></ul>
+    </section>
+  </div>
+
+  <section aria-labelledby="h-log">
+    <h2 id="h-log">Histórico</h2>
+    <ul class="list log" id="log"></ul>
+  </section>
+</div>
+
+<script>
+/* ===== Dados: editar aqui ao mudar estados ===== */
+const UPDATED = "17/11/2026";
+const ROADMAP_URL = "https://claude.ai/artifact/XXr7RPtG2T9fwztsYh8NVQ";
+
+/* st: concluido | andamento | parcial | planejado | futuro  ("pronto" é calculado)
+   id: SIS-* = sistema (código, mecânicas, publicação); VIS-* = visual e som (arte, animação, telas, áudio). */
+const SLICES = [
+{id:"SIS-AUD-001",t:"Auditoria completa",lane:"base",st:"concluido",deps:[],m:"Claude: Fable 5.2 · máximo",
+ d:"Leitura de todo o código, comparação com a cópia de 2018, lint e testes que reproduzem cada defeito no código original, com capturas de tela.",c:"Relatório com os achados por gravidade, a evidência de cada um e o que não foi coberto.",ref:"AUD inteiro",arq:"docs/AUDITORIA.md",n:"Concluída em 15/11/2026: 4 defeitos críticos, 9 altos, 12 médios e 12 pontos em aberto."},
+{id:"SIS-FIX-001",t:"O jogo volta a abrir",lane:"base",st:"concluido",deps:["SIS-AUD-001"],m:"Claude: Fable 5.2 · máximo",
+ d:"Ícone reposto, projeto na estrutura padrão do Ren'Py (pasta game/) e repositório sem compilados, saves pessoais e sobras de download.",c:"O jogo abre pelo jogar.bat e pelo launcher; o .gitignore impede que os arquivos gerados voltem.",ref:"AUD A1, B6, B7",arq:"game/gui/window_icon.png, .gitignore, jogar.bat"},
+{id:"SIS-FIX-002",t:"Travamentos e batalha",lane:"base",st:"concluido",deps:["SIS-FIX-001"],m:"Claude: Fable 5.2 · máximo",
+ d:"Os dois caminhos que travavam o jogo, a luta impossível de vencer, as barras de vida, o nome do jogador e os créditos.",c:"Os 9 finais são alcançados em teste; nenhum caminho trava; lint sem avisos.",ref:"AUD A2, A3, A4, B2, B8, B9, C1 a C7",arq:"game/script.rpy"},
+{id:"SIS-FIX-003",t:"Interface em português e legível",lane:"base",st:"concluido",deps:["SIS-FIX-001"],m:"Claude: Fable 5.2 · máximo",
+ d:"Menus, preferências, ajuda e avisos em português; fonte reserva para números, pontuação e acentos; texto escuro nas escolhas e no menu principal; nome e versão sem tags.",c:"As capturas de tela mostram as páginas dos saves, a versão e os acentos; o pacote sai com nome limpo (THEPOTATO-0.3-pc.zip).",ref:"AUD B1, B3, B4, B5, C4, C8, C9",arq:"game/screens.rpy, game/gui.rpy, game/options.rpy, game/tl/None/common.rpym"},
+{id:"SIS-QUA-001",t:"Testes automatizados",lane:"base",st:"concluido",deps:["SIS-FIX-002","SIS-FIX-003"],m:"Claude: Fable 5.2 · máximo",
+ d:"31 testes com o sistema de testes do Ren'Py 8.5: começo do jogo, todos os finais, regras da batalha, salvar e carregar, menus. Mais uma suíte de capturas de tela.",c:"O testar.bat termina com Status: PASSED duas vezes seguidas.",arq:"game/testes/testes.rpy, testar.bat"},
+{id:"SIS-DOC-001",t:"Documentação e roadmap",lane:"base",st:"concluido",deps:["SIS-AUD-001"],m:"Claude: Fable 5.2 · máximo",
+ d:"README, regras do projeto para agentes (CLAUDE.md), relatório da auditoria, lista da revisão de texto e este roadmap.",c:"Quem abre o repositório sabe jogar, testar e o que vem depois.",arq:"README.md, CLAUDE.md, docs/"},
+{id:"SIS-GIT-001",t:"Consertos no GitHub",lane:"base",st:"concluido",pri:"P1",deps:["SIS-QUA-001","SIS-DOC-001"],m:"Claude: Fable 5.2 · máximo",
+ d:"Enviar o ramo auditoria-correcoes e abrir um pull request para você revisar e aceitar.",c:"Pull request aberto no GitHub; depois de aceito, o ramo main abre e passa nos testes.",ref:"AUD resumo",arq:"todo o repositório",n:"Pull requests 1 (consertos) e 2 (protótipo) aceitos em 15/11/2026. Conferido em seguida, sobre o main do GitHub: lint limpo, 31 testes da visual novel e 21 do protótipo passando."},
+
+{id:"VIS-FON-001",t:"Fontes livres e com acento",lane:"vn",st:"parcial",pri:"P2",deps:["SIS-FIX-003"],m:"Claude: Sonnet · médio",
+ d:"Trocar a DEATH CROW e a Sunshiny por fontes de licença livre (OFL) que tenham os acentos do português, mantendo o clima do jogo. Mostrar 3 opções nas telas reais antes de trocar.",c:"Nenhuma fonte de uso pessoal no repositório; arquivo de licença ao lado de cada fonte; capturas de tela aprovadas por você.",ref:"AUD D1, D2, D9",arq:"game/gui.rpy, game/fonts/",ins:"Aprovar as fontes novas no pull request",n:"Feito em 17/11/2026: Itim nas falas, Chelsea Market nos nomes e Pirata One no título, todas de licença livre e com a licença ao lado; a Londrina Solid segue na interface. Nenhuma fonte de uso pessoal sobrou no jogo. Falta você aprovar as capturas no pull request."},
+{id:"VIS-LEG-001",t:"Legibilidade que sobrou",lane:"vn",st:"parcial",deps:["VIS-FON-001"],m:"Claude: Sonnet · médio",
+ d:"Contraste do nome do personagem, do menu rápido e dos botões de escolha, em que os pontos pretos do fundo passam por trás das letras. Fundo de agradecimento no tamanho da tela.",c:"Todo texto da interface com contraste de pelo menos 4,5 para 1; capturas de antes e depois.",ref:"AUD D8, D10",arq:"game/gui.rpy, game/screens.rpy, game/gui/button/",n:"Feito em 16/11/2026, sem mexer na arte: nomes em tons mais escuros, menu rápido maior e contorno no texto das escolhas. Falta o fundo de agradecimento (D10) e o cinza das falas, que tem contraste de 3,3 para 1."},
+{id:"SIS-BAT-001",t:"Batalha com leitura de jogada",lane:"vn",st:"concluido",pri:"P2",deps:["SIS-QUA-001"],m:"Claude: Opus · alto",
+ d:"Dar ao jogador uma pista do que o cogumelo vai fazer (pose, cor ou a fala do Esfrishe), para que Esquiva e Não fazer nada passem a ser escolhas de verdade. Ajustar vida e dano.",c:"Numa simulação de 10.000 lutas, quem lê as pistas vence mais de 70% e quem ataca sempre perde a maioria; os três finais continuam alcançáveis; testes novos.",ref:"AUD D3, D11",arq:"game/script.rpy (label batalha), game/testes/testes.rpy",n:"Feito em 16/11/2026. Em 10 mil lutas simuladas, quem lê as pistas vence todas, em 7 rodadas na média; quem só ataca vence 18,7% e perde 68,7%. A vida da batata ficou em 100, por decisão sua."},
+{id:"SIS-ROT-001",t:"Roteiro em arquivos e labels",lane:"vn",st:"concluido",deps:["SIS-QUA-001"],m:"Claude: Sonnet · alto",
+ d:"Separar personagens, história, batalha e créditos em arquivos e pôr cada trecho dentro de um label, sem comandos soltos.",c:"Nenhuma fala muda; os 31 testes passam sem alteração; lint sem avisos.",ref:"AUD D5",arq:"game/script.rpy",n:"Feito em 16/11/2026: personagens.rpy, script.rpy, batalha.rpy e creditos.rpy. As 179 linhas de texto são as mesmas e os 31 testes da época passaram sem alteração."},
+{id:"VIS-AUD-001",t:"Música e efeitos sonoros",lane:"vn",st:"parcial",deps:["SIS-QUA-001"],m:"Claude: Sonnet · médio",
+ d:"Tema do menu, uma trilha para a história, uma para a luta e efeitos de golpe, dano e escolha. Os controles de volume voltam para as preferências.",c:"Áudio em .ogg com crédito e licença anotados; volumes funcionando; jogo empacotado abaixo de 100 MB.",ref:"AUD D4",arq:"game/audio/, game/options.rpy, game/script.rpy",ins:"Ouvir a trilha provisória e dizer se fica, se muda ou se entra música de verdade",n:"Feito em 16/11/2026: três músicas e nove efeitos provisórios, gerados por código, e os volumes de volta nas preferências. Estão em .wav (5 MB) e ninguém ouviu ainda para dizer se estão bons."},
+{id:"SIS-PUB-001",t:"Visual novel 1.0 publicada",lane:"vn",st:"planejado",deps:["SIS-GIT-001","VIS-FON-001","SIS-BAT-001"],m:"Claude: Sonnet · médio",
+ d:"Um nome só em todos os lugares, licença no repositório, pacote para Windows, Mac e Linux e página no itch.io com capturas de tela.",c:"Uma pessoa sem o Ren'Py baixa, abre e termina o jogo; versão 1.0 marcada no GitHub.",ref:"AUD D6, D7, D12",arq:"game/options.rpy, LICENSE, README.md",ins:"Conta no itch.io e a licença do projeto",n:"Já feito em 16/11/2026: o nome é The Super Potato em todo lugar e os créditos mostram só os primeiros nomes."},
+{id:"SIS-WEB-001",t:"Navegador e celular",lane:"vn",st:"futuro",deps:["SIS-PUB-001"],m:"Claude: Sonnet · alto",
+ d:"O jogo rodando no navegador, na página do itch.io, e a interface revisada para tela pequena.",c:"Abre e chega a um final no Chrome do computador e de um celular Android.",ref:"AUD, seção O que a auditoria não cobriu",arq:"game/gui.rpy, game/screens.rpy"},
+
+{id:"SIS-ARQ-001",t:"Decisão: motor do jogo de ação",lane:"pre",st:"planejado",pri:"P1",deps:["SIS-AUD-001"],m:"Claude: Opus · alto",
+ d:"Registro de decisão comparando Godot 4, Unity, GameMaker e continuar no navegador: custo, curva de aprendizado, ferramentas de animação 2D e para onde exporta. Inclui um teste mínimo, a batata andando e batendo, no motor recomendado.",c:"Decisão registrada com contexto, opções e consequências; teste mínimo rodando no seu computador.",ref:"ROAD, ponto a decidir 1",arq:"docs/decisoes/",ins:"Sua escolha entre as opções",n:"Recomendação: Godot 4. É gratuito, leve, forte em 2D, e a linguagem dele (GDScript) lembra o Python do Ren'Py."},
+{id:"VIS-PRO-001",t:"Protótipo de sensação",lane:"pre",st:"parcial",pri:"P1",deps:["SIS-AUD-001"],m:"Claude: Fable 5.2 · máximo",
+ d:"Uma fase curta para sentir o jogo: a batata corre, pula, dá dash e bate com o cajado em cogumelos e cenouras. Arte provisória desenhada por código, no estilo dos seus personagens.",c:"Jogável por um link, no computador e no celular; os tempos de pulo, golpe e impacto ficam anotados para o jogo de verdade.",ref:"game/images (referência dos personagens)",arq:"prototipo/index.html, prototipo/js/, prototipo/LEIA-ME.md",ins:"Jogar no computador e no celular e dizer o que achou do pulo, do dash e do golpe",n:"Publicado e testado no computador e em tela de celular simulada: 23 testes passam, entre eles um robô que atravessa a fase inteira. Em 16/11/2026 a rodela virou a arma que a cenoura atira, como no roteiro. Falta jogar num celular de verdade e ouvir o que você achou. É um rascunho para decidir o rumo; o jogo final é refeito no motor escolhido."},
+{id:"SIS-GDD-001",t:"Documento de design",lane:"pre",st:"planejado",pri:"P2",deps:["SIS-AUD-001"],m:"Claude: Opus · alto",
+ d:"Uma página: os pilares do jogo, o que o jogador faz minuto a minuto, o que entra na fatia vertical, o que fica de fora e uma estimativa honesta de tamanho.",c:"Documento curto aprovado por você, com a lista do que NÃO entra na primeira versão.",arq:"docs/DESIGN.md",ins:"Uma conversa sobre o que você quer do jogo",n:"Silksong levou anos com uma equipe. A primeira meta aqui é uma fase de 10 a 15 minutos bem feita."},
+{id:"SIS-HIS-001",t:"Bíblia da história",lane:"pre",st:"planejado",deps:["SIS-GDD-001"],m:"Claude: Sonnet · alto",
+ d:"Mundo, personagens e linha do tempo a partir da visual novel: Potatoesvill, o clã Carrotao, Esfrishe, os cogumelos e o cajado. Aponta o que a história já responde e o que falta decidir.",c:"Cada personagem, lugar e pergunta em aberto num documento; nada contradiz a visual novel.",ref:"game/script.rpy",arq:"docs/HISTORIA.md"},
+{id:"VIS-EST-001",t:"Guia de estilo visual",lane:"pre",st:"planejado",deps:["SIS-GDD-001"],m:"Claude: Opus · alto",
+ d:"Paleta, espessura do traço, proporções dos personagens, tamanho na tela e como as suas ilustrações viram peças animáveis. Decide entre desenho quadro a quadro, recorte com esqueleto ou misto.",c:"Uma página com exemplos e um personagem de teste animado pelos dois métodos, para você comparar.",ref:"ROAD, ponto a decidir 5; game/images",arq:"docs/ESTILO.md",ins:"Seus desenhos de referência e uma folha do herói"},
+
+{id:"SIS-ENG-001",t:"Projeto no motor escolhido",lane:"nuc",st:"planejado",deps:["SIS-ARQ-001"],m:"Claude: Sonnet · alto",
+ d:"Projeto criado, pastas organizadas, teclado e controle mapeados, resolução e câmera base, um comando para rodar e um para gerar o jogo.",c:"Abre no seu computador e mostra uma sala de teste; CLAUDE.md atualizado com os comandos do motor.",arq:"acao/"},
+{id:"SIS-MOV-001",t:"Movimento da batata",lane:"nuc",st:"planejado",deps:["SIS-ENG-001","VIS-PRO-001"],m:"Claude: Opus · alto",
+ d:"Correr com aceleração, pulo com altura variável, tolerância na beirada e no botão, dash e queda controlada. Os valores partem do protótipo.",c:"Sala de testes com plataformas; os números de sensação ficam num arquivo só; testes automáticos de altura e distância do pulo.",arq:"acao/jogador/"},
+{id:"SIS-CAM-001",t:"Câmera e salas",lane:"nuc",st:"planejado",deps:["SIS-MOV-001"],m:"Claude: Sonnet · alto",
+ d:"Câmera que antecipa o movimento, limites por sala e transição entre salas.",c:"Três salas ligadas, sem tranco na troca; a batata nunca sai do quadro.",arq:"acao/camera/, acao/salas/"},
+{id:"SIS-COM-001",t:"Combate com o cajado",lane:"nuc",st:"planejado",deps:["SIS-MOV-001"],m:"Claude: Opus · alto",
+ d:"Combo de três golpes, golpe no ar e para baixo, áreas de acerto e de dano, recuo, pausa de impacto e invencibilidade curta ao apanhar.",c:"Boneco de treino que mostra o dano; cada golpe com os tempos anotados (preparo, ativo, recuperação); testes de dano.",arq:"acao/jogador/, acao/combate/",n:"É aqui que mora a sensação do jogo. Vale mais polir três golpes do que ter dez."},
+{id:"SIS-INI-001",t:"Inimigos base",lane:"nuc",st:"planejado",deps:["SIS-COM-001"],m:"Claude: Sonnet · alto",
+ d:"Cogumelo que solta fumaça roxa e cenoura soldado que patrulha, investe de perto e atira rodelas de longe. A rodela é a arma da cenoura, sem vida, como a bola de purê é a da batata. Todo ataque avisa antes.",c:"Os dois numa sala de teste; todo ataque tem aviso visível de pelo menos 0,3 s; a rodela pode ser rebatida.",ref:"game/script.rpy (como cada inimigo aparece na história)",arq:"acao/inimigos/"},
+{id:"SIS-HUD-001",t:"Vida, amido e moedas na tela",lane:"nuc",st:"planejado",deps:["SIS-COM-001"],m:"Claude: Sonnet · médio",
+ d:"Vida em batatinhas, medidor de amido (enche ao acertar golpes, gasta na bola de purê) e contador de moedas.",c:"Legível em 1280×720 e em tela de celular; some nas cenas de história.",arq:"acao/hud/"},
+{id:"SIS-SAV-001",t:"Salvar, descanso e morte",lane:"nuc",st:"planejado",deps:["SIS-CAM-001","SIS-HUD-001"],m:"Claude: Sonnet · alto",
+ d:"Ponto de descanso que salva e recupera a vida, o que acontece ao morrer e arquivo de save com versão.",c:"Fechar e abrir o jogo volta ao último descanso; um save antigo não quebra depois de uma atualização.",arq:"acao/save/"},
+{id:"SIS-QUA-002",t:"Testes e build do jogo de ação",lane:"nuc",st:"planejado",deps:["SIS-ENG-001"],m:"Claude: Sonnet · médio",
+ d:"Testes automáticos das regras (dano, pulo, save) e um comando que gera o jogo para Windows.",c:"Um comando roda tudo; o jogo gerado abre num computador sem o motor instalado.",arq:"acao/testes/"},
+
+{id:"VIS-HER-001",t:"Herói: desenho final",lane:"arte",st:"planejado",deps:["VIS-EST-001"],m:"Claude: Opus · alto",
+ d:"A batata do jogo de ação: folha de poses, peças separadas para animar e o cajado.",c:"Peças exportadas no tamanho certo; o herói no jogo é reconhecível como o da visual novel.",ref:"docs/ESTILO.md; game/images/potato corada.png, batata attake.png, batata run.png",arq:"acao/arte/heroi/",ins:"Seu desenho do herói, de frente e de lado",n:"A arte é sua. O agente prepara, organiza e monta as peças; não redesenha o personagem."},
+{id:"VIS-ANI-001",t:"Animações do herói",lane:"arte",st:"planejado",deps:["VIS-HER-001","SIS-COM-001"],m:"Claude: Opus · alto",
+ d:"Parado, correr, pular, cair, dash, três golpes, golpe no ar, levar dano e morrer, com antecipação e exagero nos golpes.",c:"Cada animação casa com os tempos do combate; um vídeo curto de cada uma para você aprovar.",arq:"acao/arte/heroi/, acao/jogador/"},
+{id:"VIS-INI-001",t:"Inimigos: desenho e animação",lane:"arte",st:"planejado",deps:["VIS-EST-001","SIS-INI-001"],m:"Claude: Sonnet · alto",
+ d:"Cogumelo e cenoura soldado com as animações de andar, avisar o golpe, atacar, levar dano e morrer, e a rodela como a arma que a cenoura atira.",c:"O aviso de cada golpe se lê só pela silhueta; vídeo curto de cada inimigo.",ref:"game/images/cogumelo azul.png, cenoura.png, rodela voadora.png",arq:"acao/arte/inimigos/",ins:"Seus desenhos dos inimigos"},
+{id:"VIS-CEN-001",t:"Cenário da floresta",lane:"arte",st:"planejado",deps:["VIS-EST-001","SIS-CAM-001"],m:"Claude: Opus · alto",
+ d:"Blocos de chão e plataforma, camadas de fundo com profundidade, luz e névoa, a partir dos seus fundos da floresta.",c:"Uma sala completa com a arte final, rodando a 60 quadros por segundo.",ref:"game/images/bg floresta dia.png, bg floresta noite.png, bg casa do vidente.png",arq:"acao/arte/cenario/"},
+{id:"VIS-VFX-001",t:"Efeitos visuais",lane:"arte",st:"planejado",deps:["VIS-ANI-001"],m:"Claude: Sonnet · alto",
+ d:"Rastro dos golpes, faíscas de impacto, poeira ao correr e pousar, fumaça roxa dos cogumelos e tremor de tela.",c:"Cada golpe e cada dano tem resposta visual; há opção de reduzir tremor e brilho.",arq:"acao/efeitos/"},
+{id:"VIS-UI-001",t:"Telas do jogo de ação",lane:"arte",st:"planejado",deps:["VIS-EST-001","SIS-HUD-001"],m:"Claude: Sonnet · alto",
+ d:"Menu principal, pausa, opções, HUD final e mapa, no mesmo estilo do jogo.",c:"Todas as telas navegáveis por teclado e controle; textos com acento.",arq:"acao/telas/"},
+
+{id:"SIS-RPG-001",t:"Habilidades que destravam",lane:"rpg",st:"planejado",deps:["SIS-COM-001","SIS-SAV-001"],m:"Claude: Opus · alto",
+ d:"Dash, bola de purê quente e pulo duplo ganhos durante a aventura; cada um abre caminhos novos no mapa.",c:"Cada habilidade tem um lugar que só ela alcança; o save guarda o que já foi ganho.",arq:"acao/habilidades/"},
+{id:"SIS-RPG-002",t:"Amuletos e inventário",lane:"rpg",st:"planejado",deps:["SIS-RPG-001"],m:"Claude: Sonnet · alto",
+ d:"Amuletos que mudam o jeito de jogar, com espaços limitados, e uma tela de inventário.",c:"Pelo menos seis amuletos que mudam a jogada, e não só os números.",arq:"acao/amuletos/"},
+{id:"SIS-RPG-003",t:"Moedas, loja e melhorias",lane:"rpg",st:"planejado",deps:["SIS-RPG-001","SIS-HUD-001"],m:"Claude: Sonnet · médio",
+ d:"Moedas deixadas pelos inimigos, uma loja e melhorias do cajado.",c:"Preços e ganhos numa tabela só; dá para terminar a fatia vertical sem comprar nada.",arq:"acao/loja/"},
+{id:"SIS-DIA-001",t:"Diálogos e personagens",lane:"rpg",st:"planejado",deps:["SIS-HIS-001","SIS-ENG-001"],m:"Claude: Sonnet · alto",
+ d:"Caixa de diálogo, retratos, escolhas com consequência e os personagens da história, começando pelo Esfrishe.",c:"Uma conversa com escolha que muda algo no mundo; os textos ficam em arquivo próprio, fáceis de revisar.",ref:"docs/HISTORIA.md; game/script.rpy",arq:"acao/dialogos/"},
+{id:"SIS-MIS-001",t:"Missões e diário",lane:"rpg",st:"planejado",deps:["SIS-DIA-001"],m:"Claude: Sonnet · médio",
+ d:"Missões dadas pelos personagens e um diário que lembra o que fazer.",c:"Uma missão completa do pedido à recompensa; o diário sobrevive a salvar e carregar.",arq:"acao/missoes/"},
+{id:"SIS-MAP-001",t:"Mapa e viagem rápida",lane:"rpg",st:"planejado",deps:["SIS-CAM-001","SIS-SAV-001"],m:"Claude: Sonnet · alto",
+ d:"Mapa que se revela conforme a exploração e viagem rápida entre os pontos de descanso.",c:"O mapa mostra só o que já foi visitado; a viagem rápida não quebra o save.",arq:"acao/mapa/"},
+
+{id:"SIS-FAT-001",t:"Fatia vertical: Floresta do Vidente",lane:"mun",st:"planejado",deps:["SIS-INI-001","SIS-SAV-001","SIS-HUD-001","VIS-ANI-001","VIS-CEN-001"],m:"Claude: Opus · alto",
+ d:"Uma área completa, do começo ao chefe: 10 a 15 minutos com movimento, combate, três inimigos, um ponto de descanso e uma conversa.",c:"Três pessoas que nunca jogaram terminam sem ajuda; anotar onde cada uma travou.",ref:"docs/DESIGN.md",arq:"acao/salas/floresta/"},
+{id:"SIS-CHE-001",t:"Chefe: o Cogumelo Ancião",lane:"mun",st:"planejado",deps:["SIS-INI-001","VIS-INI-001"],m:"Claude: Opus · alto",
+ d:"Luta de chefe em fases, com golpes avisados e um padrão que se aprende.",c:"Quem aprendeu o padrão vence sem levar dano; a luta dura de 2 a 4 minutos.",arq:"acao/inimigos/chefe_cogumelo/"},
+{id:"SIS-MUN-001",t:"Área 2: ruínas de Potatoesvill",lane:"mun",st:"futuro",deps:["SIS-FAT-001","SIS-RPG-001"],m:"Claude: Opus · alto",
+ d:"A cidade destruída, com inimigos novos e um caminho que só o dash abre.",c:"Ligada à floresta pelo mapa; 20 minutos de jogo novo.",ref:"docs/HISTORIA.md",arq:"acao/salas/potatoesvill/"},
+{id:"SIS-MUN-002",t:"Área 3: fortaleza Carrotao",lane:"mun",st:"futuro",deps:["SIS-MUN-001"],m:"Claude: Opus · alto",
+ d:"A base do clã Carrotao e o chefe final.",c:"A história fecha; os finais dependem das escolhas feitas no caminho.",ref:"docs/HISTORIA.md",arq:"acao/salas/carrotao/"},
+{id:"VIS-AUD-002",t:"Trilha e sons do jogo de ação",lane:"mun",st:"planejado",deps:["SIS-FAT-001"],m:"Claude: Sonnet · médio",
+ d:"Música da floresta e do chefe, sons de passo, golpe, dano, moeda e interface.",c:"Cada ação do jogador tem som; volumes separados para música e efeitos.",arq:"acao/audio/",ins:"Músicas com licença livre, ou alguém para compor"},
+
+{id:"SIS-POL-001",t:"Polimento e acessibilidade",lane:"lan",st:"planejado",deps:["SIS-FAT-001"],m:"Claude: Sonnet · alto",
+ d:"Ajuste de dificuldade, controles remapeáveis, opção de reduzir tremor, tamanho do texto e correção do que os testes com pessoas mostraram.",c:"A lista de travas dos testes com pessoas fica zerada; as opções valem sem reiniciar o jogo.",arq:"acao/"},
+{id:"SIS-DEM-001",t:"Demo pública",lane:"lan",st:"planejado",deps:["SIS-FAT-001","SIS-CHE-001","VIS-UI-001","SIS-POL-001"],m:"Claude: Sonnet · médio",
+ d:"A fatia vertical empacotada, página no itch.io, trailer curto e um formulário de opinião.",c:"Demo publicada e dez respostas de quem jogou.",arq:"acao/, docs/",ins:"Conta no itch.io"},
+{id:"SIS-LAN-001",t:"Jogo completo 1.0",lane:"lan",st:"futuro",deps:["SIS-MUN-002","SIS-DEM-001","VIS-AUD-002","SIS-RPG-002","SIS-RPG-003","SIS-MIS-001","SIS-MAP-001","VIS-VFX-001"],m:"Claude: Opus · alto",
+ d:"As três áreas, os sistemas de RPG, a história fechada e a página da loja.",c:"Uma pessoa de fora termina o jogo do começo ao fim sem defeito que trave.",arq:"acao/"},
+];
+
+const LANES = [["base","Base · auditoria e consertos"],["vn","Visual novel · fechar o capítulo zero"],["pre","Pré-produção · escolher o rumo"],["nuc","Núcleo · a batata se mexe e luta"],["arte","Arte e animação"],["rpg","Sistemas de RPG"],["mun","Mundo e conteúdo"],["lan","Polimento e lançamento"]];
+const VN_LANES = new Set(["base","vn"]);
+
+const MILESTONES = [
+ {n:"M1",t:"O jogo volta a funcionar",ids:["SIS-AUD-001","SIS-FIX-001","SIS-FIX-002","SIS-FIX-003","SIS-QUA-001","SIS-DOC-001","SIS-GIT-001"],d:"O jogo abre, nenhum caminho trava, todos os finais existem e os consertos chegam ao GitHub."},
+ {n:"M2",t:"Visual novel 1.0 no ar",ids:["VIS-FON-001","VIS-LEG-001","SIS-BAT-001","SIS-ROT-001","VIS-AUD-001","SIS-PUB-001"],d:"Fontes livres, som, uma luta em que a escolha importa e o jogo publicado para qualquer pessoa baixar."},
+ {n:"M3",t:"Rumo escolhido",ids:["SIS-ARQ-001","VIS-PRO-001","SIS-GDD-001","SIS-HIS-001","VIS-EST-001"],d:"Motor decidido, protótipo jogável, o tamanho do jogo combinado e o estilo visual definido."},
+ {n:"M4",t:"A batata se mexe e luta",ids:["SIS-ENG-001","SIS-MOV-001","SIS-CAM-001","SIS-COM-001","SIS-INI-001","SIS-HUD-001","SIS-SAV-001","SIS-QUA-002"],d:"Correr, pular, dash e combo do cajado contra três inimigos, com arte provisória."},
+ {n:"M5",t:"Com a sua arte",ids:["VIS-HER-001","VIS-ANI-001","VIS-INI-001","VIS-CEN-001","VIS-VFX-001","VIS-UI-001"],d:"O herói, os inimigos e a floresta desenhados e animados no seu estilo."},
+ {n:"M6",t:"Fatia vertical e demo",ids:["SIS-FAT-001","SIS-CHE-001","SIS-POL-001","SIS-DEM-001"],d:"Uma área completa, do começo ao chefe, publicada para as pessoas jogarem."},
+ {n:"M7",t:"RPG de verdade",ids:["SIS-RPG-001","SIS-RPG-002","SIS-RPG-003","SIS-DIA-001","SIS-MIS-001","SIS-MAP-001"],d:"Habilidades, amuletos, loja, conversas com escolha, missões e mapa."},
+ {n:"M8",t:"Jogo completo",ids:["SIS-MUN-001","SIS-MUN-002","VIS-AUD-002","SIS-LAN-001","SIS-WEB-001"],d:"As três áreas, a história fechada e o lançamento."},
+];
+
+/* Auditoria. g: critico | alta | media | aberto. fix = o que foi feito (ou a recomendação, nos abertos). */
+const ACHADOS = [
+ {id:"A1",g:"critico",t:"O jogo do GitHub não abria",x:"Faltava o arquivo gui/window_icon.png, que nunca foi enviado. Erro logo na abertura.",s:"SIS-FIX-001"},
+ {id:"A2",g:"critico",t:"O final “batata traidora” travava o jogo",x:"Uma tag de cor sem a chave de fechar na fala do final.",s:"SIS-FIX-002"},
+ {id:"A3",g:"critico",t:"“Não fazer nada” quando o cogumelo ataca travava o jogo",x:"{size=+ 20} com um espaço. Acontecia em 1 de cada 3 vezes.",s:"SIS-FIX-002"},
+ {id:"A4",g:"critico",t:"Era impossível vencer a batalha",x:"A luta usava “or” no lugar de “and” e só acabava com os dois mortos. O Final Feliz nunca aparecia.",s:"SIS-FIX-002"},
+ {id:"B1",g:"alta",t:"Números, pontuação e acentos sumiam da interface",x:"A fonte DEATH CROW só tem as letras de A a Z. Páginas dos saves e versão ficavam invisíveis.",s:"SIS-FIX-003"},
+ {id:"B2",g:"alta",t:"Barra de vida confusa e que nunca saía da tela",x:"Uma barra só para os dois lutadores, na escala errada, visível até nos créditos.",s:"SIS-FIX-002"},
+ {id:"B3",g:"alta",t:"Texto das escolhas quase ilegível",x:"Cinza-claro sobre amarelo-claro; branco ao passar o mouse.",s:"SIS-FIX-003"},
+ {id:"B4",g:"alta",t:"Metade da interface em inglês",x:"Preferências, ajuda, confirmações, Return, Load, empty slot.",s:"SIS-FIX-003"},
+ {id:"B5",g:"alta",t:"Tags de cor dentro do nome e da versão do jogo",x:"Vazavam para o título da janela, para os saves e para o nome do pacote.",s:"SIS-FIX-003"},
+ {id:"B6",g:"alta",t:"Repositório fora da estrutura do Ren'Py",x:"O conteúdo de game/ estava na raiz; o launcher não reconhecia o projeto.",s:"SIS-FIX-001"},
+ {id:"B7",g:"alta",t:"Compilados, saves pessoais e 13 MB de sobras no repositório",x:"Iam junto para quem baixasse o jogo. De 35,9 MB para 20,7 MB.",s:"SIS-FIX-001"},
+ {id:"B8",g:"alta",t:"Nome do jogador sem limite e sem acentos",x:"Aceitava { } [ ], que travam textos. Nome em branco virava Mr.Fritas, o apelido do vidente.",s:"SIS-FIX-002"},
+ {id:"B9",g:"alta",t:"Créditos com 7 s de tela vazia e versão errada do Ren'Py",x:"Texto branco sobre fundo claro, com o menu rápido e a barra de vida por cima.",s:"SIS-FIX-002"},
+ {id:"C1",g:"media",t:"7 falas com tags fechadas fora de ordem ou sem fechar",x:"Corrigidas; o lint ficou sem avisos.",s:"SIS-FIX-002"},
+ {id:"C2",g:"media",t:"Sorteio da luta mudava ao voltar uma fala",x:"Variáveis com default e sorteio pelo renpy.random.",s:"SIS-FIX-002"},
+ {id:"C3",g:"media",t:"im.Scale obsoleto em 5 imagens",x:"Trocado por Transform.",s:"SIS-FIX-002"},
+ {id:"C4",g:"media",t:"Estilos em conflito na tela de digitar o nome",x:"xalign e xpos juntos; virou xanchor.",s:"SIS-FIX-003"},
+ {id:"C5",g:"media",t:"Fundo do Carrotao menor que a tela",x:"1269×714 deixava uma faixa preta; agora cobre a tela.",s:"SIS-FIX-002"},
+ {id:"C6",g:"media",t:"Riscos soltos no sprite do cogumelo azul",x:"771 pixels apagados no canto superior esquerdo.",s:"SIS-FIX-002"},
+ {id:"C7",g:"media",t:"O primeiro quadro do ataque nunca aparecia",x:"Pausa de 0,15 s entre os dois quadros.",s:"SIS-FIX-002"},
+ {id:"C8",g:"media",t:"Ícone achatado",x:"Era 401×701; ganhou margem transparente e ficou quadrado.",s:"SIS-FIX-003"},
+ {id:"C9",g:"media",t:"Volumes num jogo sem áudio",x:"Escondidos até existir som.",s:"SIS-FIX-003"},
+ {id:"C10",g:"media",t:"Código morto",x:"Tradução por API antiga, tela sem uso e imagem dos créditos definida duas vezes.",s:"SIS-FIX-002"},
+ {id:"C11",g:"media",t:"“Você perdeu -75 de vida”",x:"Dois negativos; virou “Você perdeu 75 de vida”.",s:"SIS-FIX-002"},
+ {id:"C12",g:"media",t:"39 erros de português no roteiro",x:"Em commit separado, com a lista em docs/REVISAO_DE_TEXTO.md.",s:"SIS-FIX-002"},
+ {id:"D1",g:"aberto",ok:"17/11/2026",t:"Licença das fontes",x:"Resolvido: as três fontes sem licença livre saíram; entraram Itim, Chelsea Market e Pirata One, de licença livre.",s:"VIS-FON-001"},
+ {id:"D2",g:"aberto",ok:"16/11/2026",t:"A DEATH CROW é difícil de ler",x:"Resolvido: a interface passou para a Londrina Solid, livre e com acentos. A DEATH CROW ficou só no título do menu principal.",s:"VIS-FON-001"},
+ {id:"D3",g:"aberto",ok:"16/11/2026",t:"A batalha é sorte pura",x:"Resolvido: a pose do cogumelo e uma frase mostram o que ele vai fazer. Quem lê as pistas vence; quem só ataca perde 69% das vezes.",s:"SIS-BAT-001"},
+ {id:"D4",g:"aberto",ok:"16/11/2026",t:"O jogo não tem nenhum som",x:"Resolvido em parte: três músicas e nove efeitos provisórios, gerados por código, e os volumes de volta nas preferências. Falta alguém ouvir.",s:"VIS-AUD-001"},
+ {id:"D5",g:"aberto",ok:"16/11/2026",t:"Roteiro num arquivo só, com comandos fora dos labels",x:"Resolvido: quatro arquivos, com tudo dentro de labels. Nenhuma fala mudou.",s:"SIS-ROT-001"},
+ {id:"D6",g:"aberto",ok:"16/11/2026",t:"O nome do jogo muda de lugar para lugar",x:"Resolvido: The Super Potato em todo lugar; o pacote sai como TheSuperPotato.",s:"SIS-PUB-001"},
+ {id:"D7",g:"aberto",t:"O repositório não tem licença",x:"Sem ela, ninguém tem permissão de usar o código ou a arte.",s:"SIS-PUB-001"},
+ {id:"D8",g:"aberto",ok:"16/11/2026",t:"Contraste que sobrou",x:"Resolvido: nomes mais escuros, menu rápido maior e contorno no texto das escolhas.",s:"VIS-LEG-001"},
+ {id:"D9",g:"aberto",ok:"16/11/2026",t:"Três fontes sem uso no repositório",x:"Resolvido: Tikiland, Sunshiny Italic e I Hate Comic Sans saíram do repositório.",s:"VIS-FON-001"},
+ {id:"D10",g:"aberto",t:"Fundo de agradecimento em 4:3",x:"1280×960: os 240 pixels de baixo ficam fora da tela.",s:"VIS-LEG-001"},
+ {id:"D11",g:"aberto",ok:"16/11/2026",t:"Vida da batata: 100 ou 150?",x:"Decisão sua: 100.",s:"SIS-BAT-001"},
+ {id:"D12",g:"aberto",ok:"16/11/2026",t:"Nomes completos nos créditos",x:"Você liberou tirar: os créditos e a tela Sobre mostram só os primeiros nomes.",s:"SIS-PUB-001"},
+];
+
+const FICHAS = [
+ /* {id:"SIS-BAT-001", url:"https://claude.ai/artifact/...", data:"dd/mm/aaaa", st:"Aguardando respostas · N perguntas"}
+    rot (opcional): texto do link quando não é uma ficha, e sim a própria entrega. */
+ {id:"SIS-GIT-001", url:"https://github.com/amanyumih/Super-Potato/pull/1", data:"15/11/2026", st:"Aceito no main", rot:"Ver o pull request dos consertos"},
+ {id:"SIS-BAT-001", url:"https://github.com/amanyumih/Super-Potato/pull/3", data:"17/11/2026", st:"Aceito no main", rot:"Ver o pull request da versão 0.4"},
+ {id:"VIS-PRO-001", url:"https://claude.ai/artifact/WEow1m2sHgagqRMdTjhL2a", data:"15/11/2026", st:"Jogável · falta você testar no celular", rot:"Jogar o protótipo"},
+ {id:"VIS-PRO-001", url:"https://github.com/amanyumih/Super-Potato/pull/2", data:"15/11/2026", st:"Aceito no main", rot:"Ver o pull request do protótipo"},
+];
+
+/* ok: data da decisão; sem ok = pergunta aberta */
+const PERGUNTAS = [
+ {q:"Qual motor para o jogo de ação?",d:"O Ren'Py é feito para histórias; combate em tempo real pede outro motor.",r:"Godot 4: gratuito, leve, forte em 2D, e a linguagem lembra o Python do Ren'Py. Decide-se na fatia SIS-ARQ-001, com um teste rodando."},
+ {q:"O que fazer com a visual novel?",d:"Ela já tem mundo, personagens e 9 finais.",r:"Fechar como capítulo zero, publicar a versão 1.0 e usar a história como base do jogo de ação."},
+ {q:"Qual é o nome oficial?",d:"Hoje aparecem quatro nomes diferentes.",ok:"16/11/2026",r:"The Super Potato em todo lugar, igual ao repositório."},
+ {q:"Manter as fontes ou trocar?",d:"A Sunshiny era só para uso pessoal, e a DEATH CROW não tinha números nem acentos.",ok:"17/11/2026",r:"Trocar. Entraram Itim, Chelsea Market, Londrina Solid e Pirata One, todas de licença livre."},
+ {q:"Como animar os personagens?",d:"Quadro a quadro é o mais bonito e o mais demorado: cada golpe pede de 6 a 10 desenhos.",r:"Recorte com esqueleto a partir das suas ilustrações para andar, pular e parar; quadro a quadro só nos golpes. A fatia VIS-EST-001 mostra os dois lado a lado."},
+ {q:"De que tamanho é o primeiro jogo?",d:"Silksong levou anos com uma equipe inteira.",r:"Uma área de 10 a 15 minutos, do começo ao chefe. Só depois de pronta e testada com pessoas se decide o resto."},
+ {q:"Um repositório ou dois?",d:"A visual novel e o jogo de ação usam ferramentas diferentes.",r:"O mesmo repositório, com a pasta game/ para a visual novel e acao/ para o jogo novo, pelo menos até a demo."},
+ {q:"A batalha da visual novel continua sorte pura?",d:"Hoje não existe escolha certa: atacar sempre vence 18,75% das vezes.",ok:"16/11/2026",r:"Não. O cogumelo passou a entregar o que vai fazer, e cada escolha responde a uma coisa."},
+ {q:"Vida da batata: 100 ou 150?",d:"O GitHub tem 100; a cópia de 2018 no seu computador tem 150.",ok:"16/11/2026",r:"100."},
+ {q:"Nome em branco vira o quê?",d:"Antes virava Mr.Fritas, que é o apelido do vidente.",r:"Ficou Batata, que já era o valor padrão no código. Se Mr.Fritas era uma piada de propósito, é uma linha para voltar."},
+ {q:"Os colegas concordam em aparecer nos créditos?",d:"Os créditos mostram os nomes completos de quatro pessoas.",ok:"16/11/2026",r:"Você liberou tirar os nomes completos: os créditos mostram só os primeiros nomes."},
+ {q:"Que licença o projeto vai ter?",d:"Sem licença, ninguém pode reusar nada, nem colaborar com segurança.",r:"Decidir antes da versão 1.0. Uma combinação comum é MIT para o código e CC BY-NC para a arte."},
+];
+
+const INSUMOS = [
+ {n:"Jogar o protótipo no computador e no celular e dizer o que achou do pulo, do dash e do golpe",b:["VIS-PRO-001","SIS-MOV-001"],o:"Você"},
+ {n:"Aprovar as fontes novas no pull request das fontes",b:["VIS-FON-001"],o:"Você"},
+ {n:"Ouvir a trilha provisória da visual novel e dizer se fica ou se troca",b:["VIS-AUD-001"],o:"Você"},
+ {n:"Músicas e efeitos com licença livre, ou gravações suas, para o jogo de ação",b:["VIS-AUD-002"],o:"Você"},
+ {n:"Conta no itch.io",b:["SIS-PUB-001","SIS-DEM-001"],o:"Você"},
+ {n:"Licença do projeto",b:["SIS-PUB-001"],o:"Você"},
+ {n:"Escolha do motor do jogo de ação",b:["SIS-ARQ-001"],o:"Você"},
+ {n:"Uma conversa sobre o que você quer do jogo",b:["SIS-GDD-001"],o:"Você"},
+ {n:"Seus desenhos: folha do herói, inimigos e referências de estilo",b:["VIS-EST-001","VIS-HER-001","VIS-INI-001"],o:"Você"},
+];
+
+const LOG = [
+ {d:"17/11/2026",t:"Fontes trocadas para deixar o jogo pronto para ficar público: Itim, Chelsea Market e Pirata One, de licença livre, no lugar da Soft Marshmallow, da Sunshiny e da DEATH CROW. Lint limpo e 42 testes passando."},
+ {d:"17/11/2026",t:"Pull request 3 aceito: a versão 0.4 está no main do GitHub. Conferido sobre o main: lint limpo, 42 testes da visual novel e 23 do protótipo passando."},
+ {d:"16/11/2026",t:"Nove pontos em aberto da auditoria resolvidos a pedido seu, na versão 0.4: batalha com pistas, roteiro em quatro arquivos, um nome só, créditos sem sobrenome, contraste, fonte legível na interface, três fontes a menos e som provisório. Lint limpo e 42 testes passando."},
+ {d:"16/11/2026",t:"Protótipo corrigido: a rodela deixou de ser um inimigo voador e virou a arma que a cenoura atira, como no roteiro. O cajado rebate a rodela. Os testes passaram de 21 para 23."},
+ {d:"15/11/2026",t:"Pull requests 1 (consertos) e 2 (protótipo) aceitos: o main do GitHub voltou a abrir. Conferido sobre o main: lint limpo, 31 testes da visual novel e 21 do protótipo passando."},
+ {d:"15/11/2026",t:"Ramos auditoria-correcoes e prototipo-acao enviados ao GitHub. Os dois pull requests estão com o texto pronto: falta abrir e aceitar. O README deixou de listar os nomes completos de quem fez o jogo; eles continuam nos créditos."},
+ {d:"15/11/2026",t:"Protótipo de sensação publicado: uma fase jogável no teclado e no toque, com a batata, o cajado, o cogumelo, a cenoura e a rodela desenhados por código. 21 testes passam, entre eles um robô que atravessa a fase inteira. Gravado no ramo prototipo-acao; falta jogar num celular de verdade."},
+ {d:"15/11/2026",t:"Roadmap criado com 47 fatias em 8 frentes, a partir da auditoria e do plano para o jogo de ação."},
+ {d:"15/11/2026",t:"Consertos gravados em 10 commits no ramo auditoria-correcoes. Lint sem avisos, 31 testes passando duas vezes seguidas e pacote THEPOTATO-0.3-pc.zip gerado em teste. Nada foi enviado ao GitHub."},
+ {d:"14/11/2026",t:"Auditoria: o jogo do GitHub não abria; dois caminhos travavam e a batalha era impossível de vencer. Cada defeito foi reproduzido em teste antes do conserto."},
+ {d:"14/11/2026",t:"Git 2.56 e Ren'Py 8.5.3 instalados no computador."},
+];
+
+/* ===== Lógica ===== */
+const byId = Object.fromEntries(SLICES.map(s=>[s.id,s]));
+const kids = {}; SLICES.forEach(s=>kids[s.id]=[]);
+SLICES.forEach(s=>s.deps.forEach(d=>kids[d] && kids[d].push(s.id)));
+const owner = s => s.id.startsWith("VIS") ? "vis" : "sis";
+const ownerName = s => s.id.startsWith("VIS") ? "Visual" : "Sistema";
+const done = id => byId[id] && byId[id].st==="concluido";
+const ready = s => (s.st==="planejado"||s.st==="parcial") && s.deps.every(done);
+const view = s => s.st==="planejado" && ready(s) ? "pronto" : s.st;
+const LABEL = {concluido:"Concluída",andamento:"Em andamento",parcial:"Parcial",pronto:"Pronta para iniciar",planejado:"Aguardando dependências",futuro:"Futura"};
+const laneName = Object.fromEntries(LANES);
+function anc(id,set=new Set()){byId[id].deps.forEach(d=>{if(!set.has(d)){set.add(d);anc(d,set)}});return set}
+function desc(id,set=new Set()){kids[id].forEach(k=>{if(!set.has(k)){set.add(k);desc(k,set)}});return set}
+const esc = t => String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const chip = st => `<span class="chip s-${st}">${LABEL[st]}</span>`;
+const ownTag = s => `<span class="own ${owner(s)}">${ownerName(s)}</span>`;
+const idl = id => `<button class="idlink${done(id)?" done":""}" data-go="${id}">${id}</button>`;
+
+// Prompt por fatia
+function promptFor(s){
+  const modelo = (s.m||"").replace(/^Claude:\s*/, "").trim() || "a definir";
+  const deps = s.deps.map(id=>byId[id]);
+  const pendente = deps.some(d=>d.st!=="concluido");
+  const acao = s.lane!=="base" && s.lane!=="vn" && s.lane!=="pre";
+  const L = [];
+  L.push("# Fatia " + s.id + " — " + s.t, "");
+  L.push("Projeto: The Super Potato (visual novel em Ren'Py; jogo de ação e aventura 2D em preparação).");
+  L.push("Repositório: github.com/amanyumih/Super-Potato (os consertos da auditoria estão no ramo auditoria-correcoes)");
+  L.push("Modelo recomendado (Claude): " + modelo, "");
+  L.push("## Antes de começar");
+  L.push("1. Leia CLAUDE.md na raiz do repositório e siga as regras.");
+  L.push("2. Leia: " + (s.ref || "nada além do CLAUDE.md"));
+  L.push("3. Confira no código atual os arquivos: " + (s.arq || "a definir"), "");
+  L.push("Abreviações usadas acima (caminhos a partir da raiz do repositório):");
+  L.push("- AUD = docs/AUDITORIA.md (os achados têm códigos: A1 a A4 críticos, B altos, C médios, D em aberto)");
+  L.push("- ROAD = docs/roadmap.html (este roadmap; os dados ficam no bloco de script do fim do arquivo)");
+  L.push("- game/ = a visual novel em Ren'Py · acao/ = o jogo de ação, criado na fatia SIS-ENG-001");
+  L.push("- testar.bat = lint do Ren'Py + testes automatizados · testar.bat capturas = capturas de tela", "");
+  L.push("## O que entregar", s.d, "");
+  L.push("## Pronto quando", s.c, "");
+  L.push("## Depende de");
+  if(deps.length) deps.forEach(d=>L.push("- " + d.id + " · " + d.t + " · " + LABEL[view(d)])); else L.push("- nada");
+  if(pendente) L.push("Atenção: há dependência não concluída. Confirme com a dona do projeto antes de seguir.");
+  L.push("");
+  if(s.ins) L.push("## Precisa da dona do projeto antes", s.ins, "Se isso ainda não foi resolvido, pare e pergunte.", "");
+  if(s.n) L.push("## Observações", s.n, "");
+  L.push("## Faça até o fim");
+  L.push("Não pare no código. Implemente, rode e mostre a prova:");
+  if(acao){
+    L.push("- Rode o jogo no motor escolhido e os testes da pasta acao/ (os comandos ficam no CLAUDE.md).");
+    L.push("- Tudo o que muda a aparência ou a sensação precisa de uma captura de tela ou um vídeo curto.");
+  } else {
+    L.push("- Rode testar.bat e mostre o resultado: lint sem avisos e Status: PASSED.");
+    L.push("- Mudou algo visível? Rode testar.bat capturas e olhe as imagens em tests/screenshots.");
+  }
+  L.push("- Todo conserto de defeito vem com um teste que falharia sem o conserto.");
+  L.push("- Só deixe para a dona do projeto o que você de fato não consegue fazer: escolhas de arte e de história, contas externas, login no GitHub. Se não rodou, diga que não rodou; não escreva \"testado\".", "");
+  L.push("## Fora do escopo", "Tudo o que não está em \"O que entregar\". Ideias extras vão para o relatório, não para o código. Não redesenhe a arte nem reescreva falas da história sem pedir.", "");
+  L.push("## Ao terminar", "Relatório curto: arquivos alterados, comandos rodados e o resultado, prova de cada critério, desvios e o que não foi verificado. Depois atualize em docs/roadmap.html o estado desta fatia (st) e acrescente uma linha no histórico (LOG)." + (ROADMAP_URL ? " Republique a página no mesmo link: " + ROADMAP_URL : ""));
+  return L.join("\n");
+}
+function wirePrompt(s){
+  const ta = document.getElementById("prompt-texto");
+  const btn = document.getElementById("btn-copiar");
+  ta.value = promptFor(s);
+  btn.addEventListener("click",()=>{
+    const texto = promptFor(s);
+    let p;
+    try{ p = navigator.clipboard.writeText(texto); }catch(e){ p = Promise.reject(e); }
+    p.then(()=>{ btn.textContent = "Copiado"; setTimeout(()=>{btn.textContent = "Copiar prompt"},2000); })
+     .catch(()=>{ ta.focus(); ta.select(); btn.textContent = "Selecionado: copie com Ctrl+C"; setTimeout(()=>{btn.textContent = "Copiar prompt"},2500); });
+  });
+}
+
+document.getElementById("updated").textContent = "Atualizado em " + UPDATED;
+
+// Contagens
+(function(){
+  const order=["concluido","andamento","parcial","pronto","planejado","futuro"];
+  const cnt={}; order.forEach(k=>cnt[k]=0); SLICES.forEach(s=>cnt[view(s)]++);
+  const col={concluido:"var(--ok)",andamento:"var(--run)",parcial:"var(--part)",pronto:"var(--ready)",planejado:"var(--edge)",futuro:"transparent"};
+  document.getElementById("counts").innerHTML = `<span class="count"><b>${SLICES.length}</b> fatias</span>` +
+    order.filter(k=>cnt[k]).map(k=>`<span class="count"><span class="chip s-${k}">${LABEL[k]}</span><b>${cnt[k]}</b></span>`).join("");
+  document.getElementById("bar").innerHTML = order.map(k=>`<span style="width:${cnt[k]/SLICES.length*100}%;background:${col[k]}"></span>`).join("");
+})();
+
+// Auditoria
+(function(){
+  const by = g => ACHADOS.filter(a=>a.g===g);
+  const nums = [["crit","critico","críticos consertados","não abria ou travava"],["alta","alta","altos consertados","o jogador via o defeito"],["media","media","médios consertados","qualidade e manutenção"],["aberto","aberto","em aberto","dependem de uma escolha sua"]];
+  document.getElementById("aud-nums").innerHTML = nums.map(([cls,g,l,sub])=>`<div class="aud-num ${cls}"><b>${(g==="aberto"?by(g).filter(a=>!a.ok):by(g)).length}</b><strong>${l}</strong><br><span>${sub}</span></div>`).join("");
+  const row = a => `<li><span class="fid">${a.id}</span><b>${esc(a.t)}</b><span class="fr">${a.g==="aberto"?(a.ok?`<span class="chip s-concluido">Resolvido em ${esc(a.ok)}</span>`:`<span class="chip s-pronto" style="background:transparent;border-color:currentColor">Em aberto</span>`):`<span class="chip s-concluido">Consertado</span>`}${idl(a.s)}</span><span class="fx">${esc(a.x)}</span></li>`;
+  document.getElementById("finds-crit").innerHTML = by("critico").map(row).join("");
+  document.getElementById("finds-alta").innerHTML = by("alta").map(row).join("");
+  document.getElementById("finds-media").innerHTML = by("media").map(row).join("");
+  document.getElementById("finds-aberto").innerHTML = by("aberto").map(row).join("");
+  document.getElementById("sum-alta").textContent = `${by("alta").length} defeitos de gravidade alta, todos consertados`;
+  document.getElementById("sum-media").textContent = `${by("media").length} de gravidade média, todos consertados`;
+  document.getElementById("sum-aberto").textContent = `${by("aberto").filter(a=>!a.ok).length} pontos em aberto e ${by("aberto").filter(a=>a.ok).length} já resolvidos`;
+})();
+
+// Marcos
+(function(){
+  let nextSet=false;
+  document.getElementById("miles").innerHTML = MILESTONES.map(m=>{
+    const all=new Set(m.ids);
+    const walk=i=>byId[i].deps.forEach(d=>{if(!all.has(d)){all.add(d);walk(d)}});
+    m.ids.forEach(walk);
+    const tot=all.size, ok=[...all].filter(done).length, left=[...all].filter(i=>!done(i));
+    const isNext=!nextSet && left.length>0; if(isNext) nextSet=true;
+    return `<article class="mile${isNext?" next":""}"><div class="top"><span class="n">${m.n}${isNext?" · próximo":""}</span><span class="pct">${ok}/${tot} concluídas</span></div>
+      <h3>${esc(m.t)}</h3><p class="muted" style="font-size:13px">${esc(m.d)}</p>
+      <div class="pb"><span style="width:${ok/tot*100}%"></span></div>
+      ${left.length?`<div><span class="muted" style="font-size:12px">Faltam ${left.length}:</span><div class="left">${left.map(idl).join("")}</div></div>`:`<span class="chip s-concluido">Concluído</span>`}
+    </article>`}).join("");
+})();
+
+// Agora
+(function(){
+  const card = s => `<div class="item"><div class="r1">${s.pri?`<span class="pri">${s.pri}</span>`:""}${idl(s.id)}${ownTag(s)}</div>
+    <div class="t">${esc(s.t)}</div>${s.m?`<div class="m">Modelo: ${esc(s.m)}</div>`:""}${s.ins?`<div class="m">Depende de você: ${esc(s.ins)}</div>`:""}</div>`;
+  const run=SLICES.filter(s=>s.st==="andamento");
+  const rd=SLICES.filter(s=>view(s)==="pronto").sort((a,b)=>(a.pri||"P9").localeCompare(b.pri||"P9"));
+  const pt=SLICES.filter(s=>s.st==="parcial"&&ready(s));
+  document.getElementById("c-run").innerHTML = run.length?run.map(card).join(""):`<p class="empty">Nenhuma fatia em andamento. A próxima começa quando você pedir.</p>`;
+  document.getElementById("c-ready").innerHTML = rd.map(card).join("")||`<p class="empty">Nada pronto.</p>`;
+  document.getElementById("c-part").innerHTML = pt.map(card).join("")||`<p class="empty">Nenhuma.</p>`;
+})();
+
+// Grafo
+const W=158,H=50,GX=34,GY=12,PADX=24,PADT=34,BANDG=40;
+const depth={}; function dp(id){if(depth[id]!=null)return depth[id];const s=byId[id];depth[id]=s.deps.length?1+Math.max(...s.deps.map(dp)):0;return depth[id]}
+SLICES.forEach(s=>dp(s.id));
+const maxD=Math.max(...Object.values(depth));
+const laneIdx=Object.fromEntries(LANES.map((l,i)=>[l[0],i]));
+const pos={}, layout={};
+(function(){
+  const groups=["SIS","VIS"], cols={};
+  groups.forEach(g=>{cols[g]=[];for(let d=0;d<=maxD;d++)cols[g][d]=SLICES.filter(s=>s.id.startsWith(g)&&depth[s.id]===d).sort((a,b)=>laneIdx[a.lane]-laneIdx[b.lane]||a.id.localeCompare(b.id))});
+  const rows={}; groups.forEach(g=>rows[g]=Math.max(1,...cols[g].map(c=>c.length)));
+  const top={SIS:PADT, VIS:PADT+rows.SIS*(H+GY)+BANDG};
+  const place=()=>groups.forEach(g=>cols[g].forEach((c,d)=>c.forEach((s,i)=>pos[s.id]={x:PADX+d*(W+GX),y:top[g]+i*(H+GY)})));
+  place();
+  for(let pass=0;pass<3;pass++){
+    groups.forEach(g=>cols[g].forEach((c,d)=>{ if(!d) return;
+      c.forEach(s=>{const ys=s.deps.map(x=>pos[x].y);s._b=ys.length?ys.reduce((a,b)=>a+b,0)/ys.length:pos[s.id].y});
+      c.sort((a,b)=>a._b-b._b);
+    }));
+    place();
+  }
+  layout.h=top.VIS+rows.VIS*(H+GY)+20; layout.top=top; layout.rows=rows;
+})();
+const GWIDTH=PADX*2+(maxD+1)*(W+GX)-GX;
+function trunc(t,n){return t.length>n?t.slice(0,n-1)+"…":t}
+function drawGraph(){
+  const L=layout;
+  let s=`<svg id="g" width="${GWIDTH}" height="${L.h}" viewBox="0 0 ${GWIDTH} ${L.h}" role="img" aria-label="Grafo de dependências das ${SLICES.length} fatias">`;
+  s+=`<rect class="band" x="0" y="${L.top.SIS-22}" width="${GWIDTH}" height="${L.rows.SIS*(H+GY)+14}"></rect>`;
+  s+=`<text class="band-l" x="${PADX}" y="${L.top.SIS-8}">SIS · SISTEMA — CÓDIGO, MECÂNICAS, PUBLICAÇÃO</text>`;
+  s+=`<text class="band-l" x="${PADX}" y="${L.top.VIS-12}">VIS · VISUAL E SOM — ARTE, ANIMAÇÃO, TELAS, ÁUDIO</text>`;
+  for(let d=0;d<=maxD;d++) s+=`<text class="colnum" x="${PADX+d*(W+GX)+W-4}" y="${L.top.SIS-8}" text-anchor="end">${d+1}</text>`;
+  SLICES.forEach(n=>n.deps.forEach(dep=>{const a=pos[dep],b=pos[n.id];const x1=a.x+W,y1=a.y+H/2,x2=b.x,y2=b.y+H/2,mx=(x1+x2)/2;
+    s+=`<path class="edge" data-f="${dep}" data-t="${n.id}" d="M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}"></path>`}));
+  SLICES.forEach(n=>{const p=pos[n.id],v=view(n),o=owner(n);
+    s+=`<g class="node s-${v} own-${o}" data-id="${n.id}" tabindex="0" role="button" aria-label="${n.id} ${esc(n.t)}, ${LABEL[v]}" transform="translate(${p.x},${p.y})">
+      <rect class="card" width="${W}" height="${H}" rx="8"></rect>
+      <text class="n-id" x="10" y="18">${n.id}</text>
+      <text class="n-o ${o}" x="${W-9}" y="18" text-anchor="end">${v==="concluido"?"✓ ":""}${ownerName(n)}</text>
+      <text class="n-t" x="10" y="37">${esc(trunc(n.t,22))}</text><title>${esc(n.t)} — ${LABEL[v]}</title></g>`});
+  s+=`</svg>`;
+  document.getElementById("gbox").innerHTML=s;
+}
+drawGraph();
+document.getElementById("legend").innerHTML = ["concluido","andamento","parcial","pronto","planejado","futuro"].map(chip).join("") +
+  `<span>Linha azul: precisa de · laranja: libera</span>`;
+
+const svg=()=>document.getElementById("g");
+let selected=null;
+function select(id,scroll){
+  const g=svg(); selected=id;
+  document.getElementById("clear").hidden=!id;
+  g.classList.toggle("sel",!!id);
+  g.querySelectorAll(".node").forEach(n=>n.classList.remove("hl","me"));
+  g.querySelectorAll(".edge").forEach(e=>e.classList.remove("up","down"));
+  const det=document.getElementById("detail");
+  if(!id){det.hidden=true;return}
+  const up=anc(id), dn=desc(id);
+  g.querySelectorAll(".node").forEach(n=>{const k=n.dataset.id;if(k===id)n.classList.add("hl","me");else if(up.has(k)||dn.has(k))n.classList.add("hl")});
+  g.querySelectorAll(".edge").forEach(e=>{const f=e.dataset.f,t=e.dataset.t;
+    if((t===id||up.has(t))&&up.has(f))e.classList.add("up");
+    else if((f===id||dn.has(f))&&dn.has(t))e.classList.add("down")});
+  const s=byId[id], v=view(s);
+  const missing=[...up].filter(x=>!done(x));
+  const ficha=FICHAS.find(f=>f.id===id);
+  const achados=ACHADOS.filter(a=>a.s===id).map(a=>a.id);
+  det.hidden=false;
+  det.innerHTML=`<div class="hd"><span class="mono" style="font-size:14px">${id}</span>${chip(v)}${ownTag(s)}${s.pri?`<span class="pri">${s.pri}</span>`:""}</div>
+   <h3 style="font-size:22px">${esc(s.t)}</h3>
+   <dl>
+    <dt>Entrega</dt><dd>${esc(s.d)}</dd>
+    <dt>Critério de conclusão</dt><dd>${esc(s.c)}</dd>
+    ${s.ref?`<dt>Leia antes</dt><dd>${esc(s.ref)}</dd>`:""}
+    ${s.arq?`<dt>Arquivos</dt><dd>${esc(s.arq)}</dd>`:""}
+    ${achados.length?`<dt>Achados da auditoria</dt><dd class="mono" style="font-size:13px">${achados.join(", ")}</dd>`:""}
+    ${s.n?`<dt>Nota</dt><dd>${esc(s.n)}</dd>`:""}
+    <dt>Frente</dt><dd>${esc(laneName[s.lane])}</dd>
+    <dt>Tipo e modelo</dt><dd>${ownerName(s)}${s.m?` · ${esc(s.m)}`:""}</dd>
+    <dt>Depende de</dt><dd>${s.deps.length?s.deps.map(idl).join(""):"Nada"}</dd>
+    <dt>Ainda falta antes</dt><dd>${missing.length?missing.map(idl).join(""):(s.st==="concluido"?"—":"Nada: pode começar")}</dd>
+    <dt>Libera diretamente</dt><dd>${kids[id].length?kids[id].map(idl).join(""):"Nenhuma fatia"}</dd>
+    ${s.ins?`<dt>Depende de você</dt><dd>${esc(s.ins)}</dd>`:""}
+    ${ficha?`<dt>${ficha.rot?"Link":"Ficha"}</dt><dd><a href="${esc(ficha.url)}">${ficha.rot?esc(ficha.rot)+" · ":""}${esc(ficha.st)} · ${esc(ficha.data)}</a></dd>`:""}
+   </dl>
+   <div class="pbox">
+    <h4>Prompt pronto</h4>
+    <div class="pbtns"><button class="tbtn" id="btn-copiar" type="button">Copiar prompt</button></div>
+    <textarea class="ptext" id="prompt-texto" rows="10" readonly aria-label="Prompt pronto da fatia"></textarea>
+   </div>`;
+  wirePrompt(s);
+  if(scroll){const p=pos[id],box=document.getElementById("gbox");box.scrollTo({left:Math.max(0,p.x-box.clientWidth/2+W/2),behavior:"smooth"});
+    document.getElementById("h-graph").scrollIntoView({behavior:"smooth",block:"start"})}
+}
+document.getElementById("gbox").addEventListener("click",e=>{const n=e.target.closest(".node");if(n)select(n.dataset.id===selected?null:n.dataset.id)});
+document.getElementById("gbox").addEventListener("keydown",e=>{const n=e.target.closest(".node");if(n&&(e.key==="Enter"||e.key===" ")){e.preventDefault();select(n.dataset.id)}});
+document.getElementById("clear").addEventListener("click",()=>select(null));
+document.addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(b)select(b.dataset.go,true);
+  const o=e.target.closest("[data-open]");if(o){select(o.dataset.open,false);document.getElementById("detail").scrollIntoView({behavior:"smooth",block:"start"})}});
+
+// Filtros
+document.querySelectorAll(".tbtn[data-f]").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".tbtn[data-f]").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  const f=b.dataset.f, g=svg(); g.classList.toggle("flt",f!=="all");
+  g.querySelectorAll(".node").forEach(n=>{const s=byId[n.dataset.id];
+    const on=f==="all"||(f==="sis"&&owner(s)==="sis")||(f==="vis"&&owner(s)==="vis")||(f==="pronto"&&ready(s))||(f==="vn"&&VN_LANES.has(s.lane));
+    n.classList.toggle("off",!on)});
+}));
+
+// Tabela
+(function(){
+  let h="";
+  LANES.forEach(([k,name])=>{
+    const rows=SLICES.filter(s=>s.lane===k); if(!rows.length) return;
+    const ok=rows.filter(s=>s.st==="concluido").length;
+    h+=`<tr class="lane" data-lane><td colspan="6">${esc(name)} <span class="muted mono" style="font-size:12px;font-weight:400">${ok}/${rows.length}</span></td></tr>`;
+    rows.forEach(s=>{h+=`<tr data-q="${esc((s.id+" "+s.t+" "+s.d).toLowerCase())}">
+      <td style="min-width:220px">${idl(s.id)}<div>${esc(s.t)}</div></td>
+      <td>${ownTag(s)}${s.m?`<div class="muted" style="font-size:12px;margin-top:3px">${esc(s.m)}</div>`:""}</td>
+      <td>${chip(view(s))}</td>
+      <td><div class="deps">${s.deps.length?s.deps.map(idl).join(""):`<span class="muted">—</span>`}</div></td>
+      <td class="num">${kids[s.id].length}</td>
+      <td><button class="tbtn" data-open="${s.id}" aria-label="Abrir o prompt de ${s.id}">Abrir</button></td></tr>`});
+  });
+  document.getElementById("tbody").innerHTML=h;
+  document.getElementById("q").addEventListener("input",e=>{const q=e.target.value.trim().toLowerCase();
+    document.querySelectorAll("#tbody tr[data-q]").forEach(r=>r.hidden=q&&!r.dataset.q.includes(q));
+    document.querySelectorAll("#tbody tr[data-lane]").forEach(r=>r.hidden=!!q)});
+})();
+
+// Listas
+document.getElementById("fichas").innerHTML = FICHAS.length ? FICHAS.map(f=>`<li><div>${idl(f.id)} · ${esc(byId[f.id].t)}</div><div class="m"><a href="${esc(f.url)}">${esc(f.rot||"Abrir ficha")}</a><span>${esc(f.st)}</span><span>${esc(f.data)}</span></div></li>`).join("")
+  : `<li class="empty" style="background:none">Nenhuma ficha ainda. A primeira aparece aqui quando você pedir para iniciar uma fatia.</li>`;
+const abertas=PERGUNTAS.filter(p=>!p.ok);
+document.getElementById("h-q").textContent = abertas.length ? "Pontos a decidir" : "Decisões registradas";
+document.getElementById("perguntas").innerHTML = PERGUNTAS.map((p,i)=>`<li><b>${i+1}. ${esc(p.q)}</b>${p.ok?`<span><span class="chip s-concluido">Decidido em ${esc(p.ok)}</span></span>`:""}<span class="muted" style="font-size:13.5px">${esc(p.d)}</span><span class="rec"><b>${p.ok?"Decisão:":"Recomendação:"}</b> ${esc(p.r)}</span></li>`).join("");
+document.getElementById("insumos").innerHTML = INSUMOS.map(x=>`<li>${esc(x.n)}<div class="m"><span>Segura:</span>${x.b.map(idl).join("")}</div></li>`).join("");
+document.getElementById("log").innerHTML = LOG.map(l=>`<li><span class="d">${esc(l.d)}</span><span>${esc(l.t)}</span></li>`).join("");
+
+// Abrir uma fatia pelo link (#SIS-BAT-001)
+function abrirPeloLink(){const h=decodeURIComponent(location.hash.slice(1));if(byId[h])select(h,true)}
+abrirPeloLink();
+addEventListener("hashchange",abrirPeloLink);
+</script>

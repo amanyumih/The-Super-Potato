@@ -1,0 +1,27 @@
+# Arquivos que o Ren'Py gera sozinho (nao entram no repositorio)
+*.rpyc
+*.rpymc
+*.rpyb
+game/cache/
+game/saves/
+
+# Relatorios e registros de execucao
+/log.txt
+/traceback.txt
+/errors.txt
+/lint.txt
+/tmp/
+
+# Jogo empacotado para distribuir
+/dists/
+*-dists/
+
+# Capturas de tela geradas pelos testes automatizados
+/tests/screenshots/
+
+# Lixo de editor e de sistema
+*.bak
+*~
+Thumbs.db
+.DS_Store
+.vscode/
