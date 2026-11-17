@@ -53,12 +53,13 @@ publicado em <https://claude.ai/artifact/XXr7RPtG2T9fwztsYh8NVQ> (link privado d
 ## Protótipo do jogo de ação
 
 A pasta `prototipo/` tem uma fase curta para sentir o movimento e o combate: a batata corre, pula, dá
-dash e bate com o cajado em cogumelos e em cenouras soldado, que atiram rodelas. Funciona no teclado,
+dash e bate com o cajado em cogumelos e em cenouras soldado, que flutuam e atiram rodelas com uma
+bazuquinha. Funciona no teclado,
 no toque e no controle.
 
 - Jogar: abra `prototipo/index.html` com dois cliques, ou use o link
   <https://claude.ai/artifact/WEow1m2sHgagqRMdTjhL2a> (privado da autora).
-- Testar: abra `prototipo/index.html#teste`. Tem de aparecer `TODOS OS 23 TESTES PASSARAM`.
+- Testar: abra `prototipo/index.html#teste`. Tem de aparecer `TODOS OS 24 TESTES PASSARAM`.
 - Controles, tempos medidos e o que falta conferir: `prototipo/LEIA-ME.md`.
 
 É um rascunho com arte provisória, feito para decidir o rumo. Não usa o Ren'Py e não entra no pacote

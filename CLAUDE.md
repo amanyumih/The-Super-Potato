@@ -52,9 +52,11 @@ Página de navegador sem dependências: canvas 2D e scripts comuns, sem etapa de
 `prototipo/LEIA-ME.md` antes de mexer.
 
 - Jogar: abrir `prototipo/index.html`. Testar: abrir `prototipo/index.html#teste`, que tem de mostrar
-  `TODOS OS 23 TESTES PASSARAM`. No console, `PB.debug.testar()` e `PB.debug.medir()`.
+  `TODOS OS 24 TESTES PASSARAM`. No console, `PB.debug.testar()` e `PB.debug.medir()`.
 - Na história, a rodela é a arma que as cenouras atiram (as "rodelas cortadoras" do roteiro), como a
   bola de purê é a da batata. Não é um bicho e não tem vida. Correção da autora em 16/11/2026.
+- As cenouras flutuam (não andam, não têm pernas, não investem) e atiram as rodelas de cenoura com uma
+  bazuquinha. Correção da autora em 17/11/2026.
 - Todo número de sensação e o desenho da fase ficam em `prototipo/js/ajuste.js`. Mudou um número?
   Rode os testes: o robô acusa pulo que ficou impossível. Atualize a tabela do `LEIA-ME.md` com o que
   `PB.debug.medir()` devolver.

@@ -28,8 +28,9 @@ Três golpes seguidos terminam num golpe forte, que tira 2 de vida. Cada golpe q
 amido. A tocha acesa cura e vira o ponto de volta. O golpe para baixo quica nos inimigos e nos
 espinhos.
 
-As cenouras atiram rodelas de longe. O cajado rebate a rodela, e cada rodela rebatida também enche 1
-de amido. Uma bola de purê que encontra uma rodela no ar desmancha as duas.
+As cenouras flutuam no ar e atiram rodelas de cenoura com uma bazuquinha. O cajado rebate a rodela, e
+cada rodela rebatida também enche 1 de amido. Uma bola de purê que encontra uma rodela no ar desmancha
+as duas. Para acertar uma cenoura, pule ou fique embaixo dela e use o golpe para cima.
 
 No alto da página há três botões para estudar o jogo:
 
@@ -69,12 +70,13 @@ Os inimigos avisam antes de atacar:
 | Inimigo | Vida | Aviso | Ataque | Depois |
 |---|---|---|---|---|
 | Cogumelo | 3 | 0,60 s: incha, treme e fica roxo | fumaça de 110 px de raio por 1,5 s | descansa 1,3 s |
-| Cenoura soldado, de perto | 4 | 0,45 s: inclina para trás e mostra "!" | investe a 540 px/s por até 0,75 s | cansa 0,8 s; tonta 0,9 s se bater na parede |
-| Cenoura soldado, de longe | a mesma | 0,50 s: levanta a rodela, que gira e pisca | atira a rodela a 430 px/s, reta, por até 645 px | espera 2,4 s para atirar de novo |
+| Cenoura soldado | 4 | 0,50 s: aponta a bazuquinha, mostra "!" e a rodela aparece na boca do cano | atira a rodela a 430 px/s, reta, por até 690 px | o coice a empurra para trás; espera 2,2 s para atirar de novo |
 
-A rodela é a arma da cenoura, como a bola de purê é a da batata. Não é um bicho e não tem vida. Ela
-vai reta para onde a batata estava na hora do tiro e some ao bater na terra, ao ser rebatida ou ao
-encontrar uma bola de purê. A cenoura só atira de até 560 px e com o caminho livre.
+A cenoura não anda: ela flutua a 110 px do chão, balançando, e vai e volta devagar, com uma sombra no
+chão embaixo dela. Não tem pernas nem investida. A rodela é uma rodela de cenoura, a munição da
+bazuquinha, como a bola de purê é a arma da batata. Não é um bicho e não tem vida. Ela vai reta para
+onde a batata estava na hora do tiro e some ao bater na terra, ao ser rebatida ou ao encontrar uma bola
+de purê. A cenoura só atira de até 600 px e com o caminho livre.
 
 ## O que observar enquanto joga
 
@@ -105,8 +107,8 @@ Para mudar a fase, edite as listas `chao`, `plataformas`, `espinhos` e `coisas` 
 
 ## Testes
 
-Abra `index.html#teste` (ou o link com `#teste` no fim). Em menos de um segundo aparecem 23 linhas e,
-no alto, `TODOS OS 23 TESTES PASSARAM`. Eles conferem o pulo, o dash, o combo, o purê, cada inimigo,
+Abra `index.html#teste` (ou o link com `#teste` no fim). Em menos de um segundo aparecem 24 linhas e,
+no alto, `TODOS OS 24 TESTES PASSARAM`. Eles conferem o pulo, o dash, o combo, o purê, cada inimigo,
 a rodela, os espinhos, a tocha, a morte e o fim da fase. Os dois últimos são um robô que joga a fase inteira:
 uma vez vazia, sem levar dano, e outra com os inimigos. Se um ajuste deixar um pulo impossível, o
 robô não chega e o teste falha.
@@ -128,6 +130,10 @@ Conferido em 15/11/2026, no computador:
 Em 16/11/2026 a rodela deixou de ser um inimigo voador e virou a arma que a cenoura atira, como no
 roteiro. Conferido de novo: os 23 testes passam no Edge, e a cenoura levantando a rodela e a rodela
 no ar foram olhadas em capturas.
+
+Em 17/11/2026 as cenouras passaram a flutuar e a atirar com uma bazuquinha, como a autora descreveu,
+e a rodela ganhou as cores de uma rodela de cenoura. Os testes passaram de 23 para 24: saiu o da
+investida e entraram o de flutuar e o do golpe para cima na cenoura.
 
 Não conferido:
 

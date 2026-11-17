@@ -88,7 +88,7 @@
     // Espinhos: [coluna inicial, coluna final, linha]
     espinhos: [[40, 43, 17], [49, 55, 17], [96, 110, 17]],
     // O que mora na fase: [o quê, coluna, texto da placa].
-    // As cenouras atiram rodelas de longe: a do abismo fica do outro lado, guardando a segunda tocha.
+    // As cenouras flutuam e atiram rodelas com a bazuquinha: a do abismo fica do outro lado, guardando a segunda tocha.
     coisas: [
       ["batata", 4],
       ["placa", 7, "andar"], ["placa", 10, "golpe"], ["espantalho", 13],
@@ -112,12 +112,12 @@
     dash: "Dash: {dash}. Pule e use no ar para atravessar o buraco.",
     cogumelo: "Quando o cogumelo inchar, saia de perto: ele solta fumaça.",
     pure: "Bola de purê: {pure}. Gasta 3 de amido; cada golpe que acerta enche 1.",
-    rodela: "A cenoura atira rodelas de longe e investe de perto. Rebata a rodela com o cajado ou desvie.",
+    rodela: "As cenouras flutuam e atiram rodelas com a bazuquinha. Rebata a rodela com o cajado e acerte a cenoura com {cima} + golpe.",
     baixo: "No ar, {baixo} + golpe quica em cima do inimigo e dos espinhos."
   };
   PB.NOMES = {
-    teclado: { andar: "← → ou A D", pulo: "Z ou Espaço", golpe: "X ou J", dash: "C ou K", pure: "V ou L", baixo: "↓" },
-    toque: { andar: "a alavanca", pulo: "PULO", golpe: "GOLPE", dash: "DASH", pure: "PURÊ", baixo: "alavanca para baixo" },
-    controle: { andar: "o direcional", pulo: "A", golpe: "X", dash: "B ou RB", pure: "Y", baixo: "para baixo" }
+    teclado: { andar: "← → ou A D", pulo: "Z ou Espaço", golpe: "X ou J", dash: "C ou K", pure: "V ou L", cima: "↑", baixo: "↓" },
+    toque: { andar: "a alavanca", pulo: "PULO", golpe: "GOLPE", dash: "DASH", pure: "PURÊ", cima: "alavanca para cima", baixo: "alavanca para baixo" },
+    controle: { andar: "o direcional", pulo: "A", golpe: "X", dash: "B ou RB", pure: "Y", cima: "para cima", baixo: "para baixo" }
   };
 })();

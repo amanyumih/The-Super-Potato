@@ -1,6 +1,6 @@
 // Tudo o que aparece na tela é desenhado aqui, por código. É arte provisória, feita olhando os
 // desenhos da visual novel: a batata clara de cabelo castanho, o cajado que solta faíscas, o
-// cogumelo azul, a cenoura de moicano, a rodela cortadora que ela atira e a floresta à noite.
+// cogumelo azul, a cenoura de moicano que flutua com a sua bazuquinha, a rodela de cenoura e a floresta à noite.
 (function () {
   "use strict";
   var PB = window.PB, B = PB.B, A = PB.A, U = PB.util, M = PB.mundo, C = PB.cam, L = PB.LARG, H = PB.ALT;
@@ -478,16 +478,32 @@
     ctx.restore();
   }
 
+  // Primeira linha de chão (terra ou galho) embaixo de um ponto, em px; null se não houver perto.
+  function chaoAbaixo(x, y0) {
+    var c = Math.floor(x / B), l, t;
+    for (l = Math.floor(y0 / B); l < Math.floor(y0 / B) + 9; l++) { t = M.tile(c, l); if (t === 1 || t === 2) return l * B; }
+    return null;
+  }
+
+  // A cenoura soldado: flutua (não tem pernas) e carrega uma bazuquinha que atira rodelas de cenoura.
   function cenoura(ctx, e, x, y, t) {
-    var br = e.flash > 0, est = e.estado, salto = 0, rot = 0, esm = 1, i;
-    if (e.tonto > 0) rot = Math.sin(t * 22) * 0.12;
-    else if (est === "aviso") { rot = -0.3 * Math.min(1, e.t / 0.2); x += Math.sin(t * 80) * 1.5; }
-    else if (est === "mira") rot = -0.2 * Math.min(1, e.t / 0.15);
-    else if (est === "lanca") rot = 0.32 * Math.max(0, 1 - e.t / 0.3);
-    else if (est === "investe") rot = 0.42;
-    else if (est === "cansa") { rot = 0.12; esm = 1 - 0.05 * (1 + Math.sin(t * 9)); }
-    else if (Math.abs(e.vx) > 5) { var s = Math.abs(Math.sin(e.fase * 2.2)); salto = s * 9; esm = 0.92 + s * 0.12; }
-    ctx.save(); ctx.translate(x + e.w / 2, y + e.h - salto); ctx.scale(e.olhando, 1); ctx.rotate(rot + e.balanco * 0.18); ctx.scale(2 - esm, esm);
+    var br = e.flash > 0, est = e.estado, cx = x + e.w / 2, K = PB.INIMIGOS.cenoura, i, g;
+    // sombra no chão, embaixo dela: mostra que está flutuando
+    var chao = chaoAbaixo(cx, y + e.h);
+    if (chao !== null) {
+      var k = U.clamp(1 - (chao - (y + e.h)) / 260, 0.15, 1);
+      ctx.fillStyle = "rgba(10,8,18," + (0.35 * k).toFixed(3) + ")";
+      elipse(ctx, cx, chao - 2, 20 * k + 6, 5 * k + 2); ctx.fill();
+    }
+    // o brilho embaixo da ponta: é a habilidade de flutuar
+    var pulso = 0.5 + 0.5 * Math.sin(t * 6 + e.id);
+    g = ctx.createRadialGradient(cx, y + e.h + 4, 0, cx, y + e.h + 4, 24);
+    g.addColorStop(0, "rgba(255,200,120," + (0.32 + 0.22 * pulso).toFixed(3) + ")"); g.addColorStop(1, "rgba(255,170,80,0)");
+    ctx.fillStyle = g; elipse(ctx, cx, y + e.h + 4, 24, 13); ctx.fill();
+
+    var rot = U.clamp(e.vx / 600, -0.25, 0.25) * e.olhando;   // inclina para o lado em que vai
+    if (e.tonto > 0) rot += Math.sin(t * 22) * 0.15;
+    ctx.save(); ctx.translate(cx, y + e.h); ctx.scale(e.olhando, 1); ctx.rotate(rot + e.balanco * 0.18);
     // corpo laranja com a ponta enrolada para trás
     ctx.fillStyle = br ? "#ffffff" : COR.cenoura; ctx.strokeStyle = "#7a4a1a"; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(0, -62);
@@ -510,33 +526,56 @@
     ctx.strokeStyle = "#1b1820"; ctx.lineWidth = 2.2; ctx.lineCap = "round";
     ctx.beginPath(); ctx.moveTo(0, -53); ctx.lineTo(7, -50); ctx.moveTo(16, -53.5); ctx.lineTo(10, -50); ctx.stroke();
     ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(4, -37); ctx.lineTo(7, -39); ctx.lineTo(10, -37); ctx.lineTo(13, -39); ctx.stroke();
+
+    // a bazuquinha, apoiada no lado do corpo; na mira, aponta para a batata
+    var ang = 0, alvo, boca;
+    if (est === "mira" || est === "lanca") {
+      alvo = PB.alvoDaCenoura(e); boca = PB.bocaDaBazuca(e);
+      ang = U.clamp(Math.atan2(alvo.y - boca.y, (alvo.x - boca.x) * e.olhando), -1.1, 1.1) - rot;
+    }
+    if (est === "lanca") ang -= 0.45 * Math.max(0, 1 - e.t / 0.2);          // o coice levanta o cano
+    ctx.save(); ctx.translate(4, -30); ctx.rotate(ang);
+    ctx.lineWidth = 2; ctx.strokeStyle = "#26321a";
+    ctx.fillStyle = br ? "#ffffff" : "#5e7a3a";
+    ctx.beginPath(); ctx.rect(-12, -6, 40, 12); ctx.fill(); ctx.stroke();                 // cano
+    ctx.fillStyle = br ? "#ffffff" : "#3e5226";
+    ctx.beginPath(); ctx.rect(24, -8, 8, 16); ctx.fill(); ctx.stroke();                   // boca
+    ctx.beginPath(); ctx.rect(-16, -7, 6, 14); ctx.fill(); ctx.stroke();                  // traseira
+    ctx.beginPath(); ctx.rect(2, 5, 6, 9); ctx.fill(); ctx.stroke();                      // empunhadura
+    if (!br) { ctx.fillStyle = "#f2a33c"; ctx.fillRect(8, -6, 4, 12); }                    // faixa laranja do clã
+    if (est === "mira") rodelaNoAr(ctx, 34, 0, e.t * 30, 0.25 + 0.2 * Math.min(1, e.t / K.mira), Math.floor(t * 16) % 2 === 1);
+    if (est === "lanca" && e.t < 0.1) {                                                     // clarão do tiro
+      ctx.fillStyle = "#fff3c0"; ctx.beginPath();
+      for (i = 0; i < 8; i++) { var a = i / 8 * TAU; ctx.lineTo(40 + Math.cos(a) * (i % 2 ? 5 : 14), Math.sin(a) * (i % 2 ? 5 : 14)); }
+      ctx.closePath(); ctx.fill();
+    }
     ctx.restore();
+    ctx.restore();
+
     // avisos por cima da cabeça
-    var cx = x + e.w / 2, topo = y - 22, m;
-    if (est === "mira") {       // a rodela levantada, girando e piscando: vai atirar
-      m = PB.maoDaCenoura(e);
-      rodelaNoAr(ctx, m.x + x - e.x, m.y + y - e.y + Math.sin(e.t * 30) * 1.5, e.t * 40, 0.5 + 0.3 * Math.min(1, e.t / PB.INIMIGOS.cenoura.mira), Math.floor(t * 16) % 2 === 1);
-    } else if (est === "aviso") {
+    var topo = y - 22;
+    if (est === "mira") {
       ctx.font = "700 34px 'Baloo 2', 'Trebuchet MS', sans-serif"; ctx.textAlign = "center"; ctx.lineWidth = 5;
       ctx.strokeStyle = "rgba(20,14,28,0.9)"; ctx.strokeText("!", cx, topo); ctx.fillStyle = "#ffd27a"; ctx.fillText("!", cx, topo);
-    } else if (e.tonto > 0.3) {
+    } else if (e.tonto > 0.2) {
       ctx.fillStyle = "#ffe9a0";
       for (i = 0; i < 3; i++) { elipse(ctx, cx + Math.cos(t * 7 + i * 2.1) * 16, topo + 4 + Math.sin(t * 7 + i * 2.1) * 5, 3, 3); ctx.fill(); }
     }
   }
 
-  // A rodela cortadora: a arma que a cenoura atira. Gira no ar, com o redemoinho cinza do desenho.
+  // A rodela de cenoura: a munição da bazuquinha. Gira no ar, com o redemoinho cinza do desenho.
   function rodelaNoAr(ctx, x, y, giro, escala, pisca) {
     var i, a;
     ctx.save(); ctx.translate(x, y); ctx.scale(escala, escala);
     ctx.strokeStyle = "rgba(205,205,220,0.42)"; ctx.lineWidth = 3; ctx.lineCap = "round";
     for (i = 0; i < 3; i++) { ctx.beginPath(); ctx.ellipse(0, 2, 34 + i * 3, 13 + i * 2, 0, giro + i * 2.1, giro + i * 2.1 + 1.5); ctx.stroke(); }
     ctx.rotate(Math.sin(giro * 0.4) * 0.14);
-    ctx.fillStyle = pisca ? "#ffe2b0" : COR.rodela; ctx.strokeStyle = "#8a5a22"; ctx.lineWidth = 2;
+    ctx.fillStyle = pisca ? "#ffd9a8" : "#f28c28"; ctx.strokeStyle = "#9a4a12"; ctx.lineWidth = 2;
     elipse(ctx, 0, 0, 23, 12); ctx.fill(); ctx.stroke();
-    ctx.strokeStyle = "rgba(255,232,180,0.9)"; ctx.lineWidth = 2; elipse(ctx, 0, -1, 15, 7); ctx.stroke();
-    ctx.strokeStyle = "rgba(150,90,30,0.55)"; ctx.lineWidth = 1.2; ctx.beginPath();
-    for (i = 0; i < 6; i++) { a = i / 6 * TAU + giro; ctx.moveTo(Math.cos(a) * 3, -1 + Math.sin(a) * 1.5); ctx.lineTo(Math.cos(a) * 11, -1 + Math.sin(a) * 5); }
+    ctx.strokeStyle = "#f9c27a"; ctx.lineWidth = 2; elipse(ctx, 0, -1, 15, 7.5); ctx.stroke();      // o anel claro da rodela
+    ctx.fillStyle = "#f7b35b"; elipse(ctx, 0, -1, 6, 3); ctx.fill();                                  // o miolo
+    ctx.strokeStyle = "rgba(255,225,180,0.7)"; ctx.lineWidth = 1.2; ctx.beginPath();
+    for (i = 0; i < 6; i++) { a = i / 6 * TAU + giro; ctx.moveTo(Math.cos(a) * 7, -1 + Math.sin(a) * 3.5); ctx.lineTo(Math.cos(a) * 14, -1 + Math.sin(a) * 7); }
     ctx.stroke();
     ctx.restore();
   }

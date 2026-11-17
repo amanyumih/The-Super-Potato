@@ -384,7 +384,7 @@ const SLICES = [
 {id:"SIS-COM-001",t:"Combate com o cajado",lane:"nuc",st:"planejado",deps:["SIS-MOV-001"],m:"Claude: Opus · alto",
  d:"Combo de três golpes, golpe no ar e para baixo, áreas de acerto e de dano, recuo, pausa de impacto e invencibilidade curta ao apanhar.",c:"Boneco de treino que mostra o dano; cada golpe com os tempos anotados (preparo, ativo, recuperação); testes de dano.",arq:"acao/jogador/, acao/combate/",n:"É aqui que mora a sensação do jogo. Vale mais polir três golpes do que ter dez."},
 {id:"SIS-INI-001",t:"Inimigos base",lane:"nuc",st:"planejado",deps:["SIS-COM-001"],m:"Claude: Sonnet · alto",
- d:"Cogumelo que solta fumaça roxa e cenoura soldado que patrulha, investe de perto e atira rodelas de longe. A rodela é a arma da cenoura, sem vida, como a bola de purê é a da batata. Todo ataque avisa antes.",c:"Os dois numa sala de teste; todo ataque tem aviso visível de pelo menos 0,3 s; a rodela pode ser rebatida.",ref:"game/script.rpy (como cada inimigo aparece na história)",arq:"acao/inimigos/"},
+ d:"Cogumelo que solta fumaça roxa e cenoura soldado que flutua no ar e atira rodelas de cenoura com uma bazuquinha. A rodela é a munição, sem vida, como a bola de purê é a arma da batata. Todo ataque avisa antes.",c:"Os dois numa sala de teste; todo ataque tem aviso visível de pelo menos 0,3 s; a rodela pode ser rebatida.",ref:"game/script.rpy (como cada inimigo aparece na história)",arq:"acao/inimigos/"},
 {id:"SIS-HUD-001",t:"Vida, amido e moedas na tela",lane:"nuc",st:"planejado",deps:["SIS-COM-001"],m:"Claude: Sonnet · médio",
  d:"Vida em batatinhas, medidor de amido (enche ao acertar golpes, gasta na bola de purê) e contador de moedas.",c:"Legível em 1280×720 e em tela de celular; some nas cenas de história.",arq:"acao/hud/"},
 {id:"SIS-SAV-001",t:"Salvar, descanso e morte",lane:"nuc",st:"planejado",deps:["SIS-CAM-001","SIS-HUD-001"],m:"Claude: Sonnet · alto",
@@ -397,7 +397,7 @@ const SLICES = [
 {id:"VIS-ANI-001",t:"Animações do herói",lane:"arte",st:"planejado",deps:["VIS-HER-001","SIS-COM-001"],m:"Claude: Opus · alto",
  d:"Parado, correr, pular, cair, dash, três golpes, golpe no ar, levar dano e morrer, com antecipação e exagero nos golpes.",c:"Cada animação casa com os tempos do combate; um vídeo curto de cada uma para você aprovar.",arq:"acao/arte/heroi/, acao/jogador/"},
 {id:"VIS-INI-001",t:"Inimigos: desenho e animação",lane:"arte",st:"planejado",deps:["VIS-EST-001","SIS-INI-001"],m:"Claude: Sonnet · alto",
- d:"Cogumelo e cenoura soldado com as animações de andar, avisar o golpe, atacar, levar dano e morrer, e a rodela como a arma que a cenoura atira.",c:"O aviso de cada golpe se lê só pela silhueta; vídeo curto de cada inimigo.",ref:"game/images/cogumelo azul.png, cenoura.png, rodela voadora.png",arq:"acao/arte/inimigos/",ins:"Seus desenhos dos inimigos"},
+ d:"Cogumelo com as animações de andar, avisar o golpe, atacar, levar dano e morrer; cenoura soldado flutuando, com a bazuquinha e as rodelas de cenoura.",c:"O aviso de cada golpe se lê só pela silhueta; vídeo curto de cada inimigo.",ref:"game/images/cogumelo azul.png, cenoura.png, rodela voadora.png",arq:"acao/arte/inimigos/",ins:"Seus desenhos dos inimigos"},
 {id:"VIS-CEN-001",t:"Cenário da floresta",lane:"arte",st:"planejado",deps:["VIS-EST-001","SIS-CAM-001"],m:"Claude: Opus · alto",
  d:"Blocos de chão e plataforma, camadas de fundo com profundidade, luz e névoa, a partir dos seus fundos da floresta.",c:"Uma sala completa com a arte final, rodando a 60 quadros por segundo.",ref:"game/images/bg floresta dia.png, bg floresta noite.png, bg casa do vidente.png",arq:"acao/arte/cenario/"},
 {id:"VIS-VFX-001",t:"Efeitos visuais",lane:"arte",st:"planejado",deps:["VIS-ANI-001"],m:"Claude: Sonnet · alto",
@@ -530,6 +530,7 @@ const INSUMOS = [
 ];
 
 const LOG = [
+ {d:"17/11/2026",t:"Protótipo corrigido de novo: as cenouras flutuam e atiram rodelas de cenoura com uma bazuquinha, como você descreveu. 24 testes passando."},
  {d:"17/11/2026",t:"Créditos e tela Sobre só com o seu nome, a seu pedido."},
  {d:"17/11/2026",t:"Fontes trocadas para deixar o jogo pronto para ficar público: Itim, Chelsea Market e Pirata One, de licença livre, no lugar da Soft Marshmallow, da Sunshiny e da DEATH CROW. Lint limpo e 42 testes passando."},
  {d:"17/11/2026",t:"Pull request 3 aceito: a versão 0.4 está no main do GitHub. Conferido sobre o main: lint limpo, 42 testes da visual novel e 23 do protótipo passando."},

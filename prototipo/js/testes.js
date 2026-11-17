@@ -74,11 +74,13 @@
     t("o cogumelo cai em até 4 golpes", D.estado().inimigos === antes - 1, n);
     D.preparar(); e = achar("cogumelo"); J.batata.x = J.batata.px = e.x + e.w / 2 - 100 - 15; n = ate(function () { return J.batata.vida < A.vida; }, 400);
     t("a fumaça fere quem fica parado a 100 px", J.batata.vida === A.vida - 1, n);
-    t("todo ataque de inimigo avisa por pelo menos 0,3 s", PB.INIMIGOS.cogumelo.aviso >= 0.3 && PB.INIMIGOS.cenoura.aviso >= 0.3 && PB.INIMIGOS.cenoura.mira >= 0.3);
+    t("todo ataque de inimigo avisa por pelo menos 0,3 s", PB.INIMIGOS.cogumelo.aviso >= 0.3 && PB.INIMIGOS.cenoura.mira >= 0.3);
 
-    D.preparar(); D.ir(85); e = achar("cenoura"); n = ate(function () { return J.batata.vida < A.vida; }, 1200);
-    t("de perto, a cenoura investe e fere quem fica parado", J.batata.vida === A.vida - 1 && n > PB.INIMIGOS.cenoura.aviso * 120 && e.estado === "investe" && J.rodelas.length === 0, n);
-    // A rodela é a arma da cenoura, não um bicho: sai da mão dela, voa reto e não tem vida.
+    // As cenouras flutuam: ficam no ar, sem cair e sem andar no chão, balançando na altura delas.
+    D.preparar(); D.ir(70); e = achar("cenoura"); k = M.topo(Math.floor((e.x + e.w / 2) / B)) * B; s = 0;
+    for (n = 0; n < 240; n++) { D.passos(1, {}); s = Math.max(s, Math.abs((k - (e.y + e.h)) - PB.INIMIGOS.cenoura.altura)); }
+    t("a cenoura flutua no ar, sem cair", !e.noChao && s <= PB.INIMIGOS.cenoura.balanca + 4, { maiorDesvio: Math.round(s) });
+    // A rodela é a munição da bazuquinha, não um bicho: sai da boca da bazuca, voa reto e não tem vida.
     D.preparar(); D.ir(80.5); e = achar("cenoura"); n = ate(function () { return J.rodelas.length > 0; }, 400);
     r = e.estado; s = J.rodelas.length; ate(function () { return J.batata.vida < A.vida || !J.rodelas.length; }, 400);
     t("de longe, a cenoura mira por 0,5 s e atira uma rodela", s === 1 && r === "lanca" && n >= PB.INIMIGOS.cenoura.mira * 120 && J.batata.vida === A.vida - 1 && J.rodelas.length === 0,
@@ -93,9 +95,13 @@
     J.rodelas.push({ x: J.batata.x + 200, px: J.batata.x + 200, y: J.batata.y + 26, py: J.batata.y + 26, vx: -100, vy: 0, t: 0 });
     D.passos(1, { pure: true }); D.passos(40, {});
     t("a bola de purê desmancha a rodela no ar", J.rodelas.length === 0 && J.tiros.length === 0 && J.batata.vida === A.vida);
-    // batata no chão, cenoura em cima do planalto, a menos de 200 px: perto, mas com a terra no meio
-    D.preparar(); D.ir(75); e = achar("cenoura"); e.x = e.px = 79 * B; e.casaX = e.x + e.w / 2; ate(function () { return J.rodelas.length > 0; }, 360);
-    t("a cenoura não atira quando há terra no caminho", J.rodelas.length === 0 && J.batata.vida === A.vida && e.estado === "anda");
+    // batata no chão, encostada no planalto; cenoura em cima do planalto, ao alcance da bazuca, mas com a terra no meio
+    D.preparar(); D.ir(75); e = achar("cenoura"); e.x = e.px = 85 * B; e.casaX = e.x + e.w / 2; ate(function () { return J.rodelas.length > 0; }, 360);
+    t("a cenoura não atira quando há terra no caminho", J.rodelas.length === 0 && J.batata.vida === A.vida && e.estado === "anda",
+      { rodelas: J.rodelas.length, vida: J.batata.vida, estado: e.estado, colunaCenoura: +((e.x + e.w / 2) / B).toFixed(1), base: +((e.y + e.h) / B).toFixed(1), tiros: J.stats.dano });
+    // Embaixo da cenoura, o golpe para cima alcança: ela flutua acima da cabeça da batata.
+    D.preparar(); e = achar("cenoura"); D.ir((e.x + e.w / 2) / B - 0.3); D.passos(2, {}); n = e.vida; bate({ cima: true });
+    t("o golpe para cima acerta a cenoura que flutua", e.vida === n - 1, { vida: e.vida });
     D.preparar(); D.ir(64.5); e = achar("cogumelo"); J.batata.y -= 150; J.batata.py = J.batata.y; J.batata.x = e.x + 14; J.batata.noChao = false;
     r = false; for (n = 0; n < 80 && !r; n++) { D.passos(1, { baixo: true, golpe: n % 6 === 0 }); r = !!(J.batata.golpe && J.batata.golpe.quicou); }
     t("golpe para baixo quica em cima do inimigo", r && J.batata.vy < 0, Math.round(J.batata.vy));
