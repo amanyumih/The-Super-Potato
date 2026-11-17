@@ -39,7 +39,7 @@ define config.version = "0.4"
 define gui.about = _p("""
 Uma história com escolhas sobre a última batata de Potatoesvill.
 
-Feito por Amanda Mayumi, Lucas, Gabryel e Luis.
+Feito por Amanda Mayumi.
 """)
 
 

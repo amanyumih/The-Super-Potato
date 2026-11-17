@@ -45,7 +45,7 @@ transform rolar_creditos(tempo):
 
 init python:
     ## Quem fez o quê. Para mudar os créditos, altere só esta lista.
-    credits = ('Backgrounds', 'Amanda Mayumi'), ('Sprites', 'Amanda Mayumi'), ('Sprites', 'Lucas'), ('Roteiro', 'Amanda Mayumi'), ('Roteiro', 'Lucas'), ('Programação', 'Amanda Mayumi'), ('Programação', 'Gabryel'), ('Programação', 'Lucas'), ('Programação', 'Luis')
+    credits = (('Arte, roteiro e programação', 'Amanda Mayumi'),)
     credits_s = "{size=60}Créditos{/size}\n\n"
     c1 = ''
     for c in credits:

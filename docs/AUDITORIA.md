@@ -114,7 +114,7 @@ GitHub em 17/11/2026, pelo pull request 3.
 | D8 | Nome do personagem, menu rápido e escolhas com pouco contraste. | Nomes em tons mais escuros das mesmas cores, menu rápido maior e escuro, e contorno no texto das escolhas para tapar os pontinhos do fundo. |
 | D9 | Três fontes sem uso. | Tikiland, Sunshiny Italic e I Hate Comic Sans saíram do repositório. |
 | D11 | Vida da batata: 100 ou 150? | Decisão sua: 100. |
-| D12 | Nomes completos nos créditos. | Você liberou tirar: os créditos e a tela Sobre mostram só os primeiros nomes. |
+| D12 | Nomes completos nos créditos. | Decisão sua: primeiro os créditos e a tela Sobre passaram a mostrar só os primeiros nomes; em 17/11/2026, só o seu, porque você fez o jogo praticamente sozinha. |
 
 Como cada um foi conferido:
 

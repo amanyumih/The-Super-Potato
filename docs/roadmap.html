@@ -489,7 +489,7 @@ const ACHADOS = [
  {id:"D9",g:"aberto",ok:"16/11/2026",t:"Três fontes sem uso no repositório",x:"Resolvido: Tikiland, Sunshiny Italic e I Hate Comic Sans saíram do repositório.",s:"VIS-FON-001"},
  {id:"D10",g:"aberto",t:"Fundo de agradecimento em 4:3",x:"1280×960: os 240 pixels de baixo ficam fora da tela.",s:"VIS-LEG-001"},
  {id:"D11",g:"aberto",ok:"16/11/2026",t:"Vida da batata: 100 ou 150?",x:"Decisão sua: 100.",s:"SIS-BAT-001"},
- {id:"D12",g:"aberto",ok:"16/11/2026",t:"Nomes completos nos créditos",x:"Você liberou tirar: os créditos e a tela Sobre mostram só os primeiros nomes.",s:"SIS-PUB-001"},
+ {id:"D12",g:"aberto",ok:"16/11/2026",t:"Nomes completos nos créditos",x:"Decisão sua: os créditos e a tela Sobre mostram só o seu nome, porque você fez o jogo praticamente sozinha.",s:"SIS-PUB-001"},
 ];
 
 const FICHAS = [
@@ -513,7 +513,7 @@ const PERGUNTAS = [
  {q:"A batalha da visual novel continua sorte pura?",d:"Hoje não existe escolha certa: atacar sempre vence 18,75% das vezes.",ok:"16/11/2026",r:"Não. O cogumelo passou a entregar o que vai fazer, e cada escolha responde a uma coisa."},
  {q:"Vida da batata: 100 ou 150?",d:"O GitHub tem 100; a cópia de 2018 no seu computador tem 150.",ok:"16/11/2026",r:"100."},
  {q:"Nome em branco vira o quê?",d:"Antes virava Mr.Fritas, que é o apelido do vidente.",r:"Ficou Batata, que já era o valor padrão no código. Se Mr.Fritas era uma piada de propósito, é uma linha para voltar."},
- {q:"Os colegas concordam em aparecer nos créditos?",d:"Os créditos mostram os nomes completos de quatro pessoas.",ok:"16/11/2026",r:"Você liberou tirar os nomes completos: os créditos mostram só os primeiros nomes."},
+ {q:"Os colegas concordam em aparecer nos créditos?",d:"Os créditos mostram os nomes completos de quatro pessoas.",ok:"16/11/2026",r:"Decisão sua: os créditos mostram só o seu nome, porque você fez o jogo praticamente sozinha."},
  {q:"Que licença o projeto vai ter?",d:"Sem licença, ninguém pode reusar nada, nem colaborar com segurança.",r:"Decidir antes da versão 1.0. Uma combinação comum é MIT para o código e CC BY-NC para a arte."},
 ];
 
@@ -530,6 +530,7 @@ const INSUMOS = [
 ];
 
 const LOG = [
+ {d:"17/11/2026",t:"Créditos e tela Sobre só com o seu nome, a seu pedido."},
  {d:"17/11/2026",t:"Fontes trocadas para deixar o jogo pronto para ficar público: Itim, Chelsea Market e Pirata One, de licença livre, no lugar da Soft Marshmallow, da Sunshiny e da DEATH CROW. Lint limpo e 42 testes passando."},
  {d:"17/11/2026",t:"Pull request 3 aceito: a versão 0.4 está no main do GitHub. Conferido sobre o main: lint limpo, 42 testes da visual novel e 23 do protótipo passando."},
  {d:"16/11/2026",t:"Nove pontos em aberto da auditoria resolvidos a pedido seu, na versão 0.4: batalha com pistas, roteiro em quatro arquivos, um nome só, créditos sem sobrenome, contraste, fonte legível na interface, três fontes a menos e som provisório. Lint limpo e 42 testes passando."},

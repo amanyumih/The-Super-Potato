@@ -66,8 +66,7 @@ da visual novel.
 
 ## Créditos
 
-O jogo foi feito em 2018 por quatro pessoas, que cuidaram da arte, do roteiro e da programação. Os
-nomes aparecem nos créditos do jogo.
+Arte, roteiro e programação: Amanda Mayumi. O jogo foi feito em 2018.
 
 As quatro fontes em `game/fonts` são de licença livre (SIL Open Font License), e a licença de cada
 uma está ao lado dela: Itim nas falas, Chelsea Market nos nomes, Londrina Solid na interface e
